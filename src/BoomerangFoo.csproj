@@ -4,7 +4,7 @@
 	<GamePath>C:\Program Files (x86)\Steam\steamapps\common\Boomerang Fu</GamePath>
 	  
 	  <TargetFramework>netstandard2.0</TargetFramework>
-	  <LangVersion>7.3</LangVersion>
+	  <LangVersion>8.0</LangVersion>
 	  <AssemblyName>BoomerangFoo</AssemblyName>
     <Product>Custom gamemodes, powerups, and settings for Boomerang Fu, a couch PvP game.</Product>
     <Version>0.2.0</Version>
