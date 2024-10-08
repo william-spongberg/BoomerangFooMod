@@ -39,12 +39,21 @@
 
     <Target Name="CopyOutputFiles" AfterTargets="Build">
 	    <ItemGroup>
-		    <MyOutputFiles Include="$(OutputPath)\BoomerangFoo.dll" />
+		    <MyOutputFiles Include="$(OutputPath)\$(AssemblyName).dll" />
 	    </ItemGroup>
 	    <Copy SourceFiles="@(MyOutputFiles)" DestinationFolder="$(GamePath)\BepInEx\plugins" SkipUnchangedFiles="true" />
+
+		<MakeDir Directories="$(ProjectDir)bin\export\BoomerangFu\BepInEx\plugins" />
+		<Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(ProjectDir)bin\export\BoomerangFu\BepInEx\plugins" />
+		<Exec Command="powershell Compress-Archive -Path $(ProjectDir)bin\export\BoomerangFu\* -DestinationPath $(ProjectDir)bin\export\$(AssemblyName).zip" Condition=" '$(OS)' == 'Windows_NT' "/>
+		<Exec Command="zip -r $(ProjectDir)bin/export/$(AssemblyName).zip $(ProjectDir)bin/export/BoomerangFu" Condition=" '$(OS)' != 'Windows_NT' "/>
     </Target>
   
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="bin\export\" />
   </ItemGroup>
 </Project>
