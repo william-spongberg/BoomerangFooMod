@@ -1,10 +1,10 @@
 ﻿using BoomerangFoo.Powerups;
 using HarmonyLib;
 
-namespace BoomerangFoo
+namespace BoomerangFoo.Patches
 {
     [HarmonyPatch(typeof(Decoy), nameof(Decoy.Die))]
-    class DecoyDiePatch 
+    class DecoyDiePatch
     {
         static void Prefix(Decoy __instance)
         {

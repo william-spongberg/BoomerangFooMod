@@ -1,12 +1,12 @@
 ﻿using HarmonyLib;
 
-namespace BoomerangFoo
+namespace BoomerangFoo.Patches
 {
     [HarmonyPatch(typeof(Explosion), nameof(Explosion.Init))]
     class ExplosionInitPatch
     {
         public static float radiusMultiplier = 1f;
-        
+
         static float originalRadiusFinal;
 
         static void Prefix(Explosion __instance, bool isMiniExplosion)

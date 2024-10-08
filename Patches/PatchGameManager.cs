@@ -1,7 +1,7 @@
 ﻿using System;
 using HarmonyLib;
 
-namespace BoomerangFoo
+namespace BoomerangFoo.Patches
 {
     public class PatchGameManager
     {

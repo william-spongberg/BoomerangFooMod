@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace BoomerangFoo
+namespace BoomerangFoo.Patches
 {
     [HarmonyPatch(typeof(LevelManager), nameof(LevelManager.BuildMatchPlaylist))]
     class LevelManagerBuildMatchPlaylist
     {
         public static int[] chosenLevels = [];
-        
+
         static List<(bool, int, int, bool)> levelAssets;
         static List<int> disabledLevelIndices;
 

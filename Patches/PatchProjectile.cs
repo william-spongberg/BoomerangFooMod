@@ -2,7 +2,7 @@
 using UnityEngine;
 using static Projectile;
 
-namespace BoomerangFoo
+namespace BoomerangFoo.Patches
 {
     [HarmonyPatch(typeof(Projectile), "Update")]
     class ProjectileUpdatePatch
@@ -11,7 +11,7 @@ namespace BoomerangFoo
         {
             if (_CustomSettings.BoomerangSize != 0f)
             {
-                Projectile.projectileColliderRadius = _CustomSettings.BoomerangSize;
+                projectileColliderRadius = _CustomSettings.BoomerangSize;
                 __instance.transform.localScale = new Vector3(_CustomSettings.BoomerangSize, _CustomSettings.BoomerangSize, _CustomSettings.BoomerangSize);
             }
         }
@@ -25,9 +25,9 @@ namespace BoomerangFoo
         static void Prefix(Projectile __instance)
         {
             Movement movement = __instance.movement;
-            float bouncinessMultiplier = ((movement != Movement.Returning && movement != Movement.Controlled) ? _CustomSettings.BoomerangBouncinessMultiplier : 1f);
-            if (_CustomSettings.BoomerangBouncinessMultiplierTiedToPowerUp != 0 
-                && CommonFunctions.GetActorAsPlayer(__instance.owner) != null 
+            float bouncinessMultiplier = movement != Movement.Returning && movement != Movement.Controlled ? _CustomSettings.BoomerangBouncinessMultiplier : 1f;
+            if (_CustomSettings.BoomerangBouncinessMultiplierTiedToPowerUp != 0
+                && CommonFunctions.GetActorAsPlayer(__instance.owner) != null
                 && (CommonFunctions.GetActorAsPlayer(__instance.owner).activePowerup & _CustomSettings.BoomerangBouncinessMultiplierTiedToPowerUp) == 0)
             {
                 // we can use a bitmask to make only some powerups have this bouncy property

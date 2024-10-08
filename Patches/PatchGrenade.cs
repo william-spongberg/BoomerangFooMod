@@ -1,7 +1,7 @@
 ﻿using BoomerangFoo.Powerups;
 using HarmonyLib;
 
-namespace BoomerangFoo
+namespace BoomerangFoo.Patches
 {
     [HarmonyPatch(typeof(Grenade), "Explode")]
     class GrenadeExplodePatch

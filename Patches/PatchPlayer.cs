@@ -3,7 +3,7 @@ using HarmonyLib;
 using System;
 using System.Reflection;
 
-namespace BoomerangFoo
+namespace BoomerangFoo.Patches
 {
     class PatchPlayer
     {
@@ -178,7 +178,7 @@ namespace BoomerangFoo
     [HarmonyPatch(typeof(Player), nameof(Player.Die))]
     class PlayerDiePatch
     {
-        static void Prefix( Player __instance)
+        static void Prefix(Player __instance)
         {
             GameManagerAddPlayerKillPatch.killedPlayer = __instance;
             PatchPlayer.InvokePreDie(__instance);

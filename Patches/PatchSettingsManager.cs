@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using System;
 
-namespace BoomerangFoo
+namespace BoomerangFoo.Patches
 {
     [HarmonyPatch(typeof(SettingsManager), nameof(SettingsManager.PrepareMatchLength))]
     class SettingsManagerPrepareMatchLengthPatch
@@ -40,7 +40,8 @@ namespace BoomerangFoo
             if (GetIsTeamMatch != null)
             {
                 __instance.teamMatch = GetIsTeamMatch(__instance);
-            } else if (__instance.matchType == SettingsManager.MatchType.GoldenDisc)
+            }
+            else if (__instance.matchType == SettingsManager.MatchType.GoldenDisc)
             {
                 __instance.teamMatch = _CustomSettings.TeamGoldenBoomerang;
             }

@@ -1,4 +1,5 @@
-﻿using RewiredConsts;
+﻿using BoomerangFoo.Patches;
+using RewiredConsts;
 using System;
 using System.Collections.Generic;
 using System.Linq;

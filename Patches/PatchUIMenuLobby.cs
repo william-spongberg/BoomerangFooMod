@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 
-namespace BoomerangFoo
+namespace BoomerangFoo.Patches
 {
     [HarmonyPatch(typeof(UIMenuLobby), nameof(UIMenuLobby.GetClosestAvailableGridCell))]
     class UIMenuLobbyGetClosestAvailableGridCellPatch
@@ -10,7 +10,8 @@ namespace BoomerangFoo
         {
             if (_CustomSettings.EnableDuplicatedCharacters)
             {
-                if (selections == null || selections.Length < __instance.characterGridCells.Length) {
+                if (selections == null || selections.Length < __instance.characterGridCells.Length)
+                {
                     selections = new UICharacterGridCell.SelectionState[__instance.characterGridCells.Length];
                 }
                 for (int i = 0; i < __instance.characterGridCells.Length; i++)

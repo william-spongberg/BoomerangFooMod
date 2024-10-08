@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 
-namespace BoomerangFoo
+namespace BoomerangFoo.Patches
 {
     [HarmonyPatch(typeof(UICharacterGridCell), nameof(UICharacterGridCell.BootAllOtherPlayersExceptMe))]
     class UICharacterGridCellBootAllOtherPlayersExceptMePatch
