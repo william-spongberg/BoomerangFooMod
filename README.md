@@ -25,7 +25,6 @@ All the features in this mod are controlled by the `customConfig.ini` file in th
 - LevelPicker: Select a list of level IDs to use in the match. These will be shuffled. If none specified, then it will use the default level playlist (default None)
 
 ### Powerup Modifiers
-*Note: many of the default values are not good. I recommend changing these to their game defaults and then playing around with them*
 
 - Shield
   - ShieldCounter: The amount of hits that a shield will tank before disappearing (default 1)
