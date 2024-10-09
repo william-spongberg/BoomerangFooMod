@@ -5,7 +5,7 @@ using HarmonyLib;
 
 namespace BoomerangFoo;
 
-[BepInPlugin("Jeffjewett27.plugins.BoomerangFoo", "BoomerangFoo", "0.2.0.0")]
+[BepInPlugin("Jeffjewett27.plugins.BoomerangFoo", "BoomerangFoo", "0.2.1.0")]
 public class BoomerangFoo : BaseUnityPlugin
 {
     internal static new ManualLogSource Logger;

@@ -12,29 +12,29 @@ namespace BoomerangFoo.Powerups
     {
         public static PowerupType PowerupBitmask = PowerupType.MoveFaster;
 
-        public static float AttackCooldown = 0.8f;
-        public static float DashForceMultiplier = 1.5f;
-        public static float DashDurationMultiplier = 0.1f;
-        public static float DashCooldownMultiplier = 0.4f;
-        public static float MoveSpeedMultiplier = 1.9f;
-        public static float TurnSpeed = 24f;
+        public static float AttackCooldown = originalAttackCooldownDuration;
+        public static float DashForceMultiplier = 1f;
+        public static float DashDurationMultiplier = 1f;
+        public static float DashCooldownMultiplier = 1f;
+        public static float MoveSpeedMultiplier = 1f;
+        public static float TurnSpeed = originalTurningSpeed; 
 
         public static readonly FieldInfo playerAttackCooldownDuration = typeof(Player).GetField("attackCooldownDuration", BindingFlags.NonPublic | BindingFlags.Instance);
-        public static float originalAttackCooldownDuration = 0.66f;
+        public const float originalAttackCooldownDuration = 0.66f;
         public static readonly FieldInfo playerLungeCooldownDuration = typeof(Player).GetField("lungeCooldownDuration", BindingFlags.NonPublic | BindingFlags.Instance);
-        public static float originalLungeCooldownDuration = 0.5f;
+        public const float originalLungeCooldownDuration = 0.5f;
         public static readonly FieldInfo playerDashSpeed = typeof(Player).GetField("dashSpeed", BindingFlags.NonPublic | BindingFlags.Instance);
-        public static float originalDashSpeed = 660f;
+        public const float originalDashSpeed = 660f;
         public static readonly FieldInfo playerDashCooldown = typeof(Player).GetField("dashCooldown", BindingFlags.NonPublic | BindingFlags.Instance);
-        public static float originalDashCooldown = 0.55f;
+        public const float originalDashCooldown = 0.55f;
         public static readonly FieldInfo playerDashDuration = typeof(Player).GetField("dashDuration", BindingFlags.NonPublic | BindingFlags.Instance);
-        public static float originalDashDuration = 0.55f;
+        public const float originalDashDuration = 0.55f;
         public static readonly FieldInfo playerTurningSpeed = typeof(Player).GetField("turningSpeed", BindingFlags.NonPublic | BindingFlags.Instance);
-        public static float originalTurningSpeed = 12f;
+        public const float originalTurningSpeed = 12f;
         public static readonly FieldInfo playerWalkSpeed = typeof(Player).GetField("walkSpeed", BindingFlags.NonPublic | BindingFlags.Instance);
-        public static float originalWalkSpeed = 200f;
+        public const float originalWalkSpeed = 200f;
         public static readonly FieldInfo playerWalkSpeedUnarmed = typeof(Player).GetField("walkSpeedUnarmed", BindingFlags.NonPublic | BindingFlags.Instance);
-        public static float originalWalkSpeedUnarmed = 230f;
+        public const float originalWalkSpeedUnarmed = 230f;
 
         public static void Register()
         {

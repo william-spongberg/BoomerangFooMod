@@ -101,9 +101,9 @@ namespace BoomerangFoo
 
         public static string ModAuthor => "wq13sk, FuzzyJeffTheory";
 
-        public static string ModVersion => "0.2";
+        public static string ModVersion => "0.2.1";
 
-        public static string ModReleaseDate => "2024-10-06";
+        public static string ModReleaseDate => "2024-10-08";
 
         public static string FileLocation => "customConfig.ini";
 
@@ -138,7 +138,7 @@ namespace BoomerangFoo
             FirePowerBurnDuration = FirePowerup.BurnDuration;
             FirePowerImmunityToFire = true;
             ShrinkingBoundsKicksOnly = false;
-            ShrinkingBoundsFinalTimer = 0.5f;
+            ShrinkingBoundsFinalTimer = 3f;
             ExplosiveRadiusMultiplier = ExplosivePowerup.RadiusMultiplier;
             ExplosiveFreezingRadiusMultiplier = ExplosivePowerup.FreezingRadiusMultiplier;
             ExplosiveMiniRadiusMultiplier = ExplosivePowerup.MiniRadiusMultiplier;

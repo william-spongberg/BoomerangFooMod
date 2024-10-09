@@ -5,8 +5,8 @@
         public static PowerupType PowerupBitmask = PowerupType.ExplosiveDisc;
 
         public static float RadiusMultiplier = 1f;
-        public static float FreezingRadiusMultiplier = 1.5f;
-        public static float MiniRadiusMultiplier = 0.5f;
+        public static float FreezingRadiusMultiplier = 1f;
+        public static float MiniRadiusMultiplier = 1f;
 
         public static float GetRadiusMultipler(PowerupType discPowerup, bool isMiniDisc)
         {

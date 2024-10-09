@@ -114,10 +114,10 @@ namespace BoomerangFoo.Patches
         static readonly FieldInfo thisRoundFieldInfo = typeof(LevelManager).GetField("powerupsSpawnedThisRound", BindingFlags.NonPublic | BindingFlags.Instance);
         static readonly FieldInfo spawnAttemptsFieldInfo = typeof(LevelManager).GetField("powerupSpawnAttemptsThisRound", BindingFlags.NonPublic | BindingFlags.Instance);
 
-        static float powerupsCollectedThreshold;
-        static int maxSpawnedPowerups;
-        static int powerupsSpawnedThisRound;
-        static int powerupSpawnAttemptsThisRound;
+        static float powerupsCollectedThreshold = -1f;
+        static int maxSpawnedPowerups = -1;
+        static int powerupsSpawnedThisRound = -1;
+        static int powerupSpawnAttemptsThisRound = -1;
 
         static void Prefix(LevelManager __instance)
         {
@@ -142,10 +142,20 @@ namespace BoomerangFoo.Patches
 
         static void Postfix(LevelManager __instance)
         {
-            collectedFieldInfo.SetValue(__instance, powerupsCollectedThreshold);
-            maxSpawnedFieldInfo.SetValue(__instance, maxSpawnedPowerups);
-            thisRoundFieldInfo.SetValue(__instance, powerupsSpawnedThisRound + (int)thisRoundFieldInfo.GetValue(__instance));
-            spawnAttemptsFieldInfo.SetValue(__instance, powerupSpawnAttemptsThisRound + (int)spawnAttemptsFieldInfo.GetValue(__instance));
+            if (powerupsCollectedThreshold >= 0)
+            {
+                // Reset the values
+
+                collectedFieldInfo.SetValue(__instance, powerupsCollectedThreshold);
+                maxSpawnedFieldInfo.SetValue(__instance, maxSpawnedPowerups);
+                thisRoundFieldInfo.SetValue(__instance, powerupsSpawnedThisRound + (int)thisRoundFieldInfo.GetValue(__instance));
+                spawnAttemptsFieldInfo.SetValue(__instance, powerupSpawnAttemptsThisRound + (int)spawnAttemptsFieldInfo.GetValue(__instance));
+
+                powerupsCollectedThreshold = -1f;
+                maxSpawnedPowerups = -1;
+                powerupsSpawnedThisRound = -1;
+                powerupSpawnAttemptsThisRound = -1;
+            }
         }
     }
 }

@@ -19,7 +19,7 @@ All the features in this mod are controlled by the `customConfig.ini` file in th
 - StartupPowers: Select the codes for powerups that will be given to players at the start of a match (default None)
 - RapidPowerupSpawning: If true, then powerups will spawn much more often (default False)
 - SuddenDeathTimeLimit: The amount of seconds before the boundary closes in. If 0, then it uses the default time limit (default 0)
-- ShrinkingBoundsFinalTimer: Once the boundary has shrunk, this is the amount of time you can survive outside (default 0.5, game 3)
+- ShrinkingBoundsFinalTimer: Once the boundary has shrunk, this is the amount of time you can survive outside (default 3)
 - MatchScoreLimit: The number of points needed to win the match. If 0, then it uses the default score limit (default 0)
 - BoomerangSize: Changes the size of boomerangs. If 0, then it uses the default boomerang size of 0.5 (default 0)
 - LevelPicker: Select a list of level IDs to use in the match. These will be shuffled. If none specified, then it will use the default level playlist (default None)
@@ -32,22 +32,22 @@ All the features in this mod are controlled by the `customConfig.ini` file in th
 - Decoy
   - MaxDecoyCount: The number of times you can dash and create a decoy (default 1)
 - Caffeinated 
-  - MoveFasterAttackCooldown: When Caffeinated, this changes the time between melee attacks (default 0.8, game 0.66)
-  - MoveFasterDashForceMultiplier: When Caffeinated, this multiplies the speed of the dash (default 1.5, game 1)
-  - MoveFasterDashDurationMultiplier: When Caffeinated, this multiplies the duration/length of the dash (default 0.1, game 1)
-  - MoveFasterDashCooldownMultiplier: When Caffeinated, this multiplies the time between dashes (default 0.4, game 1)
-  - MoveFasterMoveSpeedMultiplier: When Caffeinated, this multiplies general move speed (default 1.9, game 1)
-  - MoveFasterTurnSpeed: When Caffeinated, this sets the speed at which you change direction (default 24, game 12)
+  - MoveFasterAttackCooldown: When Caffeinated, this changes the time between melee attacks (default 0.66)
+  - MoveFasterDashForceMultiplier: When Caffeinated, this multiplies the speed of the dash (default 1)
+  - MoveFasterDashDurationMultiplier: When Caffeinated, this multiplies the duration/length of the dash (default 1)
+  - MoveFasterDashCooldownMultiplier: When Caffeinated, this multiplies the time between dashes (default 1)
+  - MoveFasterMoveSpeedMultiplier: When Caffeinated, this multiplies general move speed (default 1)
+  - MoveFasterTurnSpeed: When Caffeinated, this sets the speed at which you change direction (default 12)
 - Bamboozled
   - ReverseInputsImmunity: If true, you are invincible while bamboozled. Kind of broken, ngl (default True)
-  - ReverseInputsDuration: The number of seconds that bamboozled lasts (default 15, game 6)
+  - ReverseInputsDuration: The number of seconds that bamboozled lasts (default 6)
 - Fire
-  - FirePowerBurnDuration: The number of seconds you will survive while on fire (default 7.5, game 2.5)
+  - FirePowerBurnDuration: The number of seconds you will survive while on fire (default 2.5)
     - Note: This does not control how long you are on fire. That is affected by how much you are moving around.
 - Explosive
   - ExplosiveRadiusMultiplier: This multiplies the size of regular and fire explosions (default 1)
-  - ExplosiveFreezingRadiusMultiplier: This multiplies the size of ice explosions (default 1.5, game 1)
-  - ExplosiveMiniRadiusMultiplier: This multiplies the size of mini explosions from multishot (default 0.5, game 1)
+  - ExplosiveFreezingRadiusMultiplier: This multiplies the size of ice explosions (default 1)
+  - ExplosiveMiniRadiusMultiplier: This multiplies the size of mini explosions from multishot. This stacks on top of ExplosiveRadiusMultiplier (default 1)
 
 There are also some custom modifiers you can apply to any powerup.
 - Flying: Gives you temporary flight when over a water or a hazard.
@@ -82,4 +82,4 @@ I am adapting this mod from an existing mod, and so not all the features have be
 This mod is unaffiliated with Cranky Watermelon and contains no *Boomerang Fu* assets.
 
 ## License
-Distributed under the MIT [license](https://github.com/hk-modding/api/blob/master/LICENSE).
+Distributed under the MIT [license](https://github.com/Jeffjewett27/BoomerangFoo/blob/master/LICENSE.txt).

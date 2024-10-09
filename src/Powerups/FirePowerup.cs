@@ -7,10 +7,10 @@ namespace BoomerangFoo.Powerups
     {
         public static PowerupType PowerupBitmask = PowerupType.FireDisc;
 
-        public static float BurnDuration = 7.5f;
+        public static float BurnDuration = originalBurnDuration;
 
         public static readonly FieldInfo playerBurnDuration = typeof(Player).GetField("burnDuration", BindingFlags.NonPublic | BindingFlags.Instance);
-        public static float originalBurnDuration = 2.5f;
+        public const float originalBurnDuration = 2.5f;
 
         public static void Register()
         {

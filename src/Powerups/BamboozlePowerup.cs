@@ -10,8 +10,8 @@ namespace BoomerangFoo.Powerups
 {
     public class BamboozlePowerup
     {
-        public static bool Immunity = true;
-        public static float Duration = 15f;
+        public static bool Immunity = false;
+        public static float Duration = 6f;
 
         static readonly FieldInfo isPowerupTimerOn = typeof(Player).GetField("isPowerupTimerOn", BindingFlags.NonPublic | BindingFlags.Instance);
         static readonly FieldInfo powerupTimer = typeof(Player).GetField("powerupTimer", BindingFlags.NonPublic | BindingFlags.Instance);
