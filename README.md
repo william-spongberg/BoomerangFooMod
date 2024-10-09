@@ -38,7 +38,7 @@ All the features in this mod are controlled by the `customConfig.ini` file in th
   - MoveFasterMoveSpeedMultiplier: When Caffeinated, this multiplies general move speed (default 1)
   - MoveFasterTurnSpeed: When Caffeinated, this sets the speed at which you change direction (default 12)
 - Bamboozled
-  - ReverseInputsImmunity: If true, you are invincible while bamboozled. Kind of broken, ngl (default True)
+  - ReverseInputsImmunity: If true, you are invincible while bamboozled. Kind of broken, ngl (default False)
   - ReverseInputsDuration: The number of seconds that bamboozled lasts (default 6)
 - Fire
   - FirePowerBurnDuration: The number of seconds you will survive while on fire (default 2.5)
