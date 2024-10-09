@@ -45,9 +45,14 @@
 	</Target>
 
 	<Target Name="BuildReleaseZip" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
-		<MakeDir Directories="$(ProjectDir)bin\export\BoomerangFu\BepInEx\plugins" />
-		<Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(ProjectDir)bin\export\BoomerangFu\BepInEx\plugins" />
-		<Exec Command="powershell -Command &quot;if (Test-Path '$(ProjectDir)bin\export\$(AssemblyName).zip') { Remove-Item '$(ProjectDir)bin\export\$(AssemblyName).zip' } ; Compress-Archive -Path $(ProjectDir)bin\export\BoomerangFu\* -DestinationPath $(ProjectDir)bin\export\$(AssemblyName).zip&quot;" Condition=" '$(OS)' == 'Windows_NT' " />
+		<PropertyGroup>
+			<ExportDir>$(ProjectDir)bin\export\</ExportDir>
+			<ReleaseZip>$(ExportDir)$(AssemblyName)-$(Version).zip</ReleaseZip>
+			<PluginsDir>$(ExportDir)BoomerangFu\BepInEx\plugins\</PluginsDir>
+		</PropertyGroup>
+		<MakeDir Directories="$(PluginsDir)" />
+		<Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(PluginsDir)" />
+		<Exec Command="powershell -Command &quot;if (Test-Path '$(ReleaseZip)') { Remove-Item '$(ReleaseZip)' } ; Compress-Archive -Path $(ExportDir)\BoomerangFu\* -DestinationPath $(ReleaseZip)&quot;" Condition=" '$(OS)' == 'Windows_NT' " />
 	</Target>
   
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
