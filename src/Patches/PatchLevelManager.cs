@@ -1,10 +1,16 @@
-﻿using HarmonyLib;
+﻿using BoomerangFoo.GameModes;
+using HarmonyLib;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
 namespace BoomerangFoo.Patches
 {
+    public class PatchLevelManager
+    {
+        public static bool BlockPowerupSpawn = false;
+    }
+
     [HarmonyPatch(typeof(LevelManager), nameof(LevelManager.BuildMatchPlaylist))]
     class LevelManagerBuildMatchPlaylist
     {
@@ -119,14 +125,15 @@ namespace BoomerangFoo.Patches
         static int powerupsSpawnedThisRound = -1;
         static int powerupSpawnAttemptsThisRound = -1;
 
-        static void Prefix(LevelManager __instance)
+        static bool Prefix(LevelManager __instance)
         {
+            if (PatchLevelManager.BlockPowerupSpawn) return false;
             // Setting to unblock powerup spawn attempt
             // powerupsCollectedThreshold = 100
             // maxSpawnedPowerups = 100
             // powerupsSpawnedThisRound = 0
             // powerupSpawnAttemptsThisRound = 0
-            if (_CustomSettings.RapidPowerUpSpawning)
+            if (GameMode.selected.gameSettings.RapidPowerUpSpawning)
             {
                 powerupsCollectedThreshold = (float)collectedFieldInfo.GetValue(__instance);
                 maxSpawnedPowerups = (int)maxSpawnedFieldInfo.GetValue(__instance);
@@ -138,6 +145,7 @@ namespace BoomerangFoo.Patches
                 thisRoundFieldInfo.SetValue(__instance, 0);
                 spawnAttemptsFieldInfo.SetValue(__instance, 0);
             }
+            return true;
         }
 
         static void Postfix(LevelManager __instance)

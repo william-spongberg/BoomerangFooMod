@@ -30,7 +30,6 @@ namespace BoomerangFoo
             if (PowerupManager.powerupHistories.ContainsKey(__instance))
             {
                 Player player = PowerupManager.powerupHistories[__instance];
-                BoomerangFoo.Logger.LogInfo($"{player.character.name} collected powerup {item}");
                 PowerupManager.InvokeAcquirePowerup(player, __instance, item);
             }
         }
@@ -45,7 +44,6 @@ namespace BoomerangFoo
             if (PowerupManager.powerupHistories.ContainsKey(__instance))
             {
                 Player player = PowerupManager.powerupHistories[__instance];
-                BoomerangFoo.Logger.LogInfo($"{player.character.name} removed powerup {item}");
                 PowerupManager.InvokeRemovePowerup(player, __instance, item);
             }
         }

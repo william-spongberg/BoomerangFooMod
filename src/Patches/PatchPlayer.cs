@@ -1,4 +1,5 @@
-﻿using BoomerangFoo.Powerups;
+﻿using BoomerangFoo.GameModes;
+using BoomerangFoo.Powerups;
 using HarmonyLib;
 using System;
 using System.Reflection;
@@ -66,9 +67,10 @@ namespace BoomerangFoo.Patches
         static void Postfix(Player __instance)
         {
             PatchPlayer.InvokePostSpawnIn(__instance);
-            if (_CustomSettings.StartupPowerUps != 0 && Singleton<GameManager>.Instance.roundNumber == 1)
+            PowerupType startupPowers = GameMode.selected.gameSettings.StartupPowerUps;
+            if (startupPowers != 0 && Singleton<GameManager>.Instance.roundNumber == 1)
             {
-                CommonFunctions.GetEnumPowerUpValues(_CustomSettings.StartupPowerUps).ForEach(delegate (PowerupType i)
+                CommonFunctions.GetEnumPowerUpValues(startupPowers).ForEach(delegate (PowerupType i)
                 {
                     __instance.StartPowerup(i);
                 });
@@ -141,9 +143,7 @@ namespace BoomerangFoo.Patches
 
         static void Postfix(Player __instance)
         {
-            BoomerangFoo.Logger.LogInfo("Shield triggered1");
             __instance.shieldHitsLeft = CommonFunctions.GetPlayerState(__instance)?.shieldHits ?? 1;
-            BoomerangFoo.Logger.LogInfo($"Got shield with {__instance.shieldHitsLeft} hits");
         }
     }
 
@@ -152,7 +152,6 @@ namespace BoomerangFoo.Patches
     {
         static void Postfix(Player __instance)
         {
-            BoomerangFoo.Logger.LogInfo("Shield triggered");
             __instance.shieldHitsLeft = CommonFunctions.GetPlayerState(__instance)?.shieldHits ?? 1;
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using HarmonyLib;
+using BoomerangFoo.GameModes;
 
 namespace BoomerangFoo.Patches
 {
@@ -23,6 +24,8 @@ namespace BoomerangFoo.Patches
 
         public static event Action<GameManager, Player, Player> OnPreAddPlayerKill;
         public static void InvokePreAddPlayerKill(GameManager gameManager, Player killer, Player killed) { OnPreAddPlayerKill?.Invoke(gameManager, killer, killed); }
+
+        public static Func<GameManager, Player, Player, GameMode.Relationship> PlayerRelationship; 
 
     }
 
@@ -107,15 +110,38 @@ namespace BoomerangFoo.Patches
     class GameManagerAddPlayerKillPatch
     {
         public static Player killedPlayer;
+        private static GameMode.Relationship relationship;
+        private static int teamKills;
 
-        static void Prefix(GameManager __instance, Player player)
+        static void Prefix(GameManager __instance, Player player, ref bool killerWasOpponent)
         {
             // killedPlayer needs to be set from pre_Player.Die
             if (killedPlayer == null) return;
 
             Player killer = player;
             PatchGameManager.InvokePreAddPlayerKill(__instance, killer, killedPlayer);
+
+            if (PatchGameManager.PlayerRelationship != null)
+            {
+                relationship = PatchGameManager.PlayerRelationship(__instance, killer, killedPlayer);
+                killerWasOpponent = relationship == GameMode.Relationship.Opponent;
+            } else
+            {
+                relationship = killerWasOpponent ? GameMode.Relationship.Opponent : GameMode.Relationship.Teammate;
+            }
+            int rowID = __instance.GetRowID(killer);
+            teamKills = __instance.matchScores[rowID].TeamKills;
+
             killedPlayer = null;
+        }
+
+        static void Postfix(GameManager __instance, Player player)
+        {
+            int rowID = __instance.GetRowID(player);
+            if (relationship != GameMode.Relationship.Teammate)
+            {
+                __instance.matchScores[rowID].TeamKills = teamKills;
+            }
         }
     }
 }

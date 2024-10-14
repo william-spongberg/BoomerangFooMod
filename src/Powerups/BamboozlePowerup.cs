@@ -32,14 +32,12 @@ namespace BoomerangFoo.Powerups
         {
             PlayerState playerState = CommonFunctions.GetPlayerState(player);
 
-            BoomerangFoo.Logger.LogInfo($"Reverse immunity {playerState.reverseInputsImmunity}, {player.IsInvulnerable}");
             if (playerState.reverseInputsImmunity)
             {
                 player.IsInvulnerable = true;
             }
 
             float duration = playerState.reverseInputsDuration;
-            BoomerangFoo.Logger.LogInfo($"Reverse immunity {playerState.reverseInputsImmunity}, {player.IsInvulnerable}");
             return duration;
         }
 

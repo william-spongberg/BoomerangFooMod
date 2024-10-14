@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using BoomerangFoo.GameModes;
+using HarmonyLib;
 using System;
 
 namespace BoomerangFoo.Patches
@@ -6,18 +7,11 @@ namespace BoomerangFoo.Patches
     [HarmonyPatch(typeof(SettingsManager), nameof(SettingsManager.PrepareMatchLength))]
     class SettingsManagerPrepareMatchLengthPatch
     {
-        public static Func<SettingsManager, int> GetMatchLength;
-
         static bool Prefix(SettingsManager __instance)
         {
-            if (GetMatchLength != null)
+            if (GameMode.selected.gameSettings.MatchScoreLimit != 0)
             {
-                __instance.matchScoreGoal = GetMatchLength(__instance);
-                return false;
-            }
-            if (_CustomSettings.MatchScoreLimit != 0)
-            {
-                __instance.matchScoreGoal = _CustomSettings.MatchScoreLimit;
+                __instance.matchScoreGoal = GameMode.selected.gameSettings.MatchScoreLimit;
                 return false;
             }
 

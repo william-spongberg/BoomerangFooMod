@@ -11,17 +11,32 @@ This is a mod for the 2020 couch PvP party game *Boomerang Fu* by Cranky Waterme
 
 ## Features
 
-All the features in this mod are controlled by the `customConfig.ini` file in the *Boomerang Fu* installation, which will be generated after you open the game.
+1. New gamemodes!
+- Power Drain: Kill other players to get powerups and remove their powers.
+- Juggernaut: It's a 1 versus all battle, where the juggernaut has awesome powers. Take them down to become the new juggernaut.
+2. Custom game settings
+- Match length: Set any number of points to win.
+- Rapid powerup spawns: The powerup spawn rate can be boosted.
+- Max powerups: Change the maximum number of powerups a player can hold.
+- Starting powerups: Give each of the players powerups at the beginning of the match.
+- Bouncy boomerangs: Multiply or dampen the bounciness of boomerangs off walls. Be careful in enclosed spaces...
+- Boomerang size: Change the size of boomerangs.
+3. Impossible bot difficulty: unlock the secret difficulty level buried in the game's code.
+4. UI changes: change gamemodes and settings in-game.
+
+## Config File
+
+The settings are controlled by the `customConfig.ini` file in the *Boomerang Fu* installation, which will be generated after you open the game. I am moving away from the configuration file in favor of in-game menus. However, many of the settings can still only be controlled in this way. The settings with in-game menus are crossed out.
 
 ### General Settings
-- MaxPowerups: Change the maximum number of powerups (default 3)
+- ~~MaxPowerups: Change the maximum number of powerups (default 3)~~
 - EnableDuplicatedCharacters: If true, then multiple players can be the same character (default True)
-- StartupPowers: Select the codes for powerups that will be given to players at the start of a match (default None)
-- RapidPowerupSpawning: If true, then powerups will spawn much more often (default False)
+- ~~StartupPowers: Select the codes for powerups that will be given to players at the start of a match (default None)~~
+- ~~RapidPowerupSpawning: If true, then powerups will spawn much more often (default False)~~
 - SuddenDeathTimeLimit: The amount of seconds before the boundary closes in. If 0, then it uses the default time limit (default 0)
 - ShrinkingBoundsFinalTimer: Once the boundary has shrunk, this is the amount of time you can survive outside (default 3)
-- MatchScoreLimit: The number of points needed to win the match. If 0, then it uses the default score limit (default 0)
-- BoomerangSize: Changes the size of boomerangs. If 0, then it uses the default boomerang size of 0.5 (default 0)
+- ~~MatchScoreLimit: The number of points needed to win the match. If 0, then it uses the default score limit (default 0)~~
+- ~~BoomerangSize: Changes the size of boomerangs. If 0, then it uses the default boomerang size of 0.5 (default 0)~~
 - LevelPicker: Select a list of level IDs to use in the match. These will be shuffled. If none specified, then it will use the default level playlist (default None)
 
 ### Powerup Modifiers
@@ -54,12 +69,11 @@ There are also some custom modifiers you can apply to any powerup.
   - FlyingDuration: The amount of time you can fly (default 0)
 - Bounciness: Changes how fast boomerangs bounce off walls.
   - BoomerangBouncinessMultiplierTiedToPowerup: The ID of the powerup which should grant bounciness. If 0, then it is applied to all powerups (default 0)
-  - BoomerangBouncinessMultiplier: The multiplier of how much the boomerang should bounce (default 1)
+  - ~~BoomerangBouncinessMultiplier: The multiplier of how much the boomerang should bounce (default 1)~~
 
 ### Unused Settings
 I am adapting this mod from an existing mod, and so not all the features have been ported. A lot of the settings do nothing currently.
 
-- GameMode
 - PowerDrainLoseAll
 - RamboHulkKeepSwapping
 - RamboHulkEnableRevive

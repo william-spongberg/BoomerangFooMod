@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<GamePath>C:\Program Files (x86)\Steam\steamapps\common\Boomerang Fu</GamePath>
 	  
-	  <TargetFramework>netstandard2.0</TargetFramework>
-	  <LangVersion>8.0</LangVersion>
-	  <AssemblyName>BoomerangFoo</AssemblyName>
+	<TargetFramework>netstandard2.0</TargetFramework>
+	<LangVersion>8.0</LangVersion>
+	<GamePath>C:\Program Files (x86)\Steam\steamapps\common\Boomerang Fu</GamePath>
+	<AssemblyName>BoomerangFoo</AssemblyName>
     <Product>Custom gamemodes, powerups, and settings for Boomerang Fu, a couch PvP game.</Product>
-    <Version>0.2.1</Version>
+    <Version>0.3.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <RestoreAdditionalProjectSources>
@@ -16,6 +16,16 @@
       https://nuget.samboy.dev/v3/index.json
     </RestoreAdditionalProjectSources>
     <RootNamespace>BoomerangFoo</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Deterministic>False</Deterministic>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <Deterministic>False</Deterministic>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,7 +42,10 @@
 	<Reference Include="Assembly-CSharp">
 		<HintPath>$(GamePath)\Boomerang Fu_Data\Managed\Assembly-CSharp.dll</HintPath>
 	</Reference>
-	  <Reference Include="UnityEngine.UI">
+	  <Reference Include="Unity.TextMeshPro">
+		  <HintPath>$(GamePath)\Boomerang Fu_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+	  </Reference>
+	  <Reference Include="UnityEngine.TextMeshPro">
 		  <HintPath>$(GamePath)\Boomerang Fu_Data\Managed\UnityEngine.UI.dll</HintPath>
 	  </Reference>
   </ItemGroup>

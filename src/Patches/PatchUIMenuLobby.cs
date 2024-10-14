@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System;
 
 namespace BoomerangFoo.Patches
 {
@@ -48,6 +49,18 @@ namespace BoomerangFoo.Patches
                 return false;
             }
             return true;
+        }
+    }
+
+    [HarmonyPatch(typeof(UIMenuLobby), nameof(UIMenuLobby.Init))]
+    class UIMenuLobbyInitPatch
+    {
+        static void Postfix(UIMenuLobby __instance)
+        {
+            __instance.botDifficultySlider.SetMaxValue((int)SettingsManager.BotDifficulty.impossible);
+            var difficultyNames = __instance.botDifficultySlider.stringMap;
+            Array.Resize(ref __instance.botDifficultySlider.stringMap, __instance.botDifficultySlider.stringMap.Length + 1);
+            __instance.botDifficultySlider.stringMap[__instance.botDifficultySlider.stringMap.Length - 1] = "Impossible";
         }
     }
 }

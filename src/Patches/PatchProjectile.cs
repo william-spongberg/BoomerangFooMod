@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using BoomerangFoo.GameModes;
+using HarmonyLib;
 using UnityEngine;
 using static Projectile;
 
@@ -9,10 +10,11 @@ namespace BoomerangFoo.Patches
     {
         static void Prefix(Projectile __instance)
         {
-            if (_CustomSettings.BoomerangSize != 0f)
+            float boomerangSize = GameMode.selected.gameSettings.BoomerangSize;
+            if (boomerangSize != 0f)
             {
-                projectileColliderRadius = _CustomSettings.BoomerangSize;
-                __instance.transform.localScale = new Vector3(_CustomSettings.BoomerangSize, _CustomSettings.BoomerangSize, _CustomSettings.BoomerangSize);
+                projectileColliderRadius = boomerangSize;
+                __instance.transform.localScale = new Vector3(boomerangSize, boomerangSize, boomerangSize);
             }
         }
     }
@@ -25,7 +27,7 @@ namespace BoomerangFoo.Patches
         static void Prefix(Projectile __instance)
         {
             Movement movement = __instance.movement;
-            float bouncinessMultiplier = movement != Movement.Returning && movement != Movement.Controlled ? _CustomSettings.BoomerangBouncinessMultiplier : 1f;
+            float bouncinessMultiplier = movement != Movement.Returning && movement != Movement.Controlled ? GameMode.selected.gameSettings.BoomerangBouncinessMultiplier : 1f;
             if (_CustomSettings.BoomerangBouncinessMultiplierTiedToPowerUp != 0
                 && CommonFunctions.GetActorAsPlayer(__instance.owner) != null
                 && (CommonFunctions.GetActorAsPlayer(__instance.owner).activePowerup & _CustomSettings.BoomerangBouncinessMultiplierTiedToPowerUp) == 0)
