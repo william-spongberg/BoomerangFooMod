@@ -3,13 +3,12 @@
   <PropertyGroup>
 	  
 	<TargetFramework>netstandard2.0</TargetFramework>
-	<LangVersion>8.0</LangVersion>
+	<LangVersion>12.0</LangVersion>
 	<GamePath>C:\Program Files (x86)\Steam\steamapps\common\Boomerang Fu</GamePath>
 	<AssemblyName>BoomerangFoo</AssemblyName>
-    <Product>Custom gamemodes, powerups, and settings for Boomerang Fu, a couch PvP game.</Product>
-    <Version>0.3.0</Version>
+    <Product>BoomerangFoo</Product>
+    <Version>0.3.1</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <LangVersion>latest</LangVersion>
     <RestoreAdditionalProjectSources>
       https://api.nuget.org/v3/index.json;
       https://nuget.bepinex.dev/v3/index.json;
@@ -51,18 +50,38 @@
   </ItemGroup>
 
     <Target Name="CopyOutputFiles" AfterTargets="Build">
+		<PropertyGroup>
+			<BepinexDir>$(GamePath)/BepInEx</BepinexDir>
+			<DownloadUrl>https://github.com/BepInEx/BepInEx/releases/download/v5.4.23.2/BepInEx_win_x64_5.4.23.2.zip</DownloadUrl>
+			<DownloadZip>$(TempDir)BepInEx.zip</DownloadZip>
+		</PropertyGroup>
+
+		<Exec Command="powershell -Command &quot;If (!(Test-Path '$(DownloadZip)')) { Invoke-WebRequest -Uri '$(DownloadUrl)' -OutFile '$(DownloadZip)' }&quot;" Condition="!Exists('$(BepinexDir)')" />
+		<Exec Command="powershell -Command &quot;Expand-Archive -Path '$(DownloadZip)' -DestinationPath '$(GamePath)' -Force&quot;" Condition="!Exists('$(BepinexDir)')" />
+		<Delete Files="$(DownloadZip)" Condition="Exists('$(DownloadZip)')" />
+			
 	    <ItemGroup>
 		    <MyOutputFiles Include="$(OutputPath)\$(AssemblyName).dll" />
 	    </ItemGroup>
+		
 	    <Copy SourceFiles="@(MyOutputFiles)" DestinationFolder="$(GamePath)\BepInEx\plugins" SkipUnchangedFiles="true" />
 	</Target>
 
 	<Target Name="BuildReleaseZip" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
 		<PropertyGroup>
 			<ExportDir>$(ProjectDir)bin\export\</ExportDir>
+			<BoomerangFuDir>$(ExportDir)/BoomerangFu</BoomerangFuDir>
+			<BepinexDir>$(BoomerangFuDir)/BepInEx</BepinexDir>
 			<ReleaseZip>$(ExportDir)$(AssemblyName)-$(Version).zip</ReleaseZip>
 			<PluginsDir>$(ExportDir)BoomerangFu\BepInEx\plugins\</PluginsDir>
+			<DownloadUrl>https://github.com/BepInEx/BepInEx/releases/download/v5.4.23.2/BepInEx_win_x64_5.4.23.2.zip</DownloadUrl>
+			<DownloadZip>$(TempDir)BepInEx.zip</DownloadZip>
 		</PropertyGroup>
+
+		<Exec Command="powershell -Command &quot;If (!(Test-Path '$(DownloadZip)')) { Invoke-WebRequest -Uri '$(DownloadUrl)' -OutFile '$(DownloadZip)' }&quot;" Condition="!Exists('$(BoomerangFuDir)')" />
+		<Exec Command="powershell -Command &quot;Expand-Archive -Path '$(DownloadZip)' -DestinationPath '$(BoomerangFuDir)' -Force&quot;" Condition="!Exists('$(BoomerangFuDir)')" />
+		<Delete Files="$(DownloadZip)" Condition="Exists('$(DownloadZip)')" />
+		
 		<MakeDir Directories="$(PluginsDir)" />
 		<Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(PluginsDir)" />
 		<Exec Command="powershell -Command &quot;if (Test-Path '$(ReleaseZip)') { Remove-Item '$(ReleaseZip)' } ; Compress-Archive -Path $(ExportDir)\BoomerangFu\* -DestinationPath $(ReleaseZip)&quot;" Condition=" '$(OS)' == 'Windows_NT' " />

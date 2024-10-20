@@ -7,7 +7,7 @@ using HarmonyLib;
 
 namespace BoomerangFoo;
 
-[BepInPlugin("Jeffjewett27.plugins.BoomerangFoo", "BoomerangFoo", "0.3.0")]
+[BepInPlugin("Jeffjewett27.plugins.BoomerangFoo", MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
 public class BoomerangFoo : BaseUnityPlugin
 {
     internal static new ManualLogSource Logger;
@@ -16,7 +16,7 @@ public class BoomerangFoo : BaseUnityPlugin
     {
         // Plugin startup logic
         Logger = base.Logger;
-        Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
+        Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} v{MyPluginInfo.PLUGIN_VERSION} is loaded!");
 
         var harmony = new Harmony("Jeffjewett27.patch");
         harmony.PatchAll();

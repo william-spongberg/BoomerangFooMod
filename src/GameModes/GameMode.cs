@@ -125,10 +125,6 @@ namespace BoomerangFoo.GameModes
 
         public virtual void RegisterSettings()
         {
-            //if (!Modifiers.settings.ContainsKey("customHead"))
-            //{
-            //    Modifiers.CloneModifierSetting("customHead", "Custom", "Powerups", "Homing");
-            //}
             if (!Modifiers.settings.ContainsKey("bounciness"))
             {
                 var bounciness = Modifiers.CloneModifierSetting("bounciness", "Bounciness", "Fall protection", "Homing");

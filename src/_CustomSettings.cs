@@ -349,7 +349,55 @@ namespace BoomerangFoo
 
         private static void SaveSettings()
         {
-            string contents = string.Format("//in case of any questions - discord: {0}\r\n//version {1} {2}\r\n\r\n\r\n//Power up codes:\r\n//2 - Caffeinated; 4 - DashThroughWalls; 8 - Bamboozled; 16 - Shield; 32 - Explosive; 64 - Multi; 128 - Teleport; 256 - Fire; 512 - Extra; 1024 - Freeze; 2048 - Disguise; 8192 - Telekinesis; 32768 - Decoy\r\n\r\n//0 - Standard\r\n//1 - Power Drain mode - no spawning of power ups; you kill, you gain a power up; you die, you lose power up (1 or all)\r\n//2 - RamboHulk mode - powered up player vs the rest\r\n//3 - Survive Till Dawn mode - one player with boomerang, others without; after certain time, the boomerang switches to a different player\r\n{3}={4}\r\n\r\n[Power Drain options]\r\n{5}={6}\r\n\r\n[RamboHulk options]\r\n{7}={8}\r\n{9}={10}\r\n{11}={12}//flag values - add up the power up codes, which you want to assign\r\n{13}={14}//flag values\r\n\r\n[SurviveTillDawn options]\r\n{15}={16}\r\n{17}={18}\r\n{19}={20}//flag values - add up the power up codes, which you want to assign\r\n{21}={22}//flag values\r\n{23}={24}\r\n\r\n[Game Options]\r\n{25}={26}\r\n{27}={28}\r\n{29}={30}//flag values\r\n{31}={32}\r\n{33}={34}// 0 - default; otherwise the value is in seconds\r\n{35}={36}// 0 - default by match length\r\n{37}={38}\r\n{39}={40}\r\n{41}={42}//0-default\r\n{43}=[]//pick by level ids, i.e. [1,2,3,3,3], max level for base game is id=35, keep empty for regular rotation\r\n\r\n[CameraOptions]\r\n{44}={45}// values 0-3\r\n{46}={47}\r\n\r\n[Powerup modifiers]\r\n{48}={49}\r\n{50}=null //into how many should be split; null - default\r\n{51}={52}\r\n{53}={54} //when killed, replace existing decoy\r\n{55}={56}\r\n{57}={58}\r\n{59}={60}\r\n{61}={62}\r\n{63}={64}\r\n{65}={66}\r\n{67}={68}\r\n{69}={70}\r\n{71}={72} //pick to which power up should the flying be tied - enter code from the list above\r\n{73}={74}\r\n{75}={76}\r\n{77}={78}\r\n{79}={80}\r\n{81}={82}\r\n{83}={84}\r\n{85}={86}\r\n{87}={88}// larger the value, more it will bounce\r\n{89}={90}// 0 - for all; if power up code, then only for specific powerup\r\n\r\n[Experimantal]\r\n{91}={92}// has bugs\r\n", ModAuthor, ModVersion, ModReleaseDate, "PowerDrainLoseAll", PowerDrainLoseAll, "RamboHulkKeepSwapping", RamboHulkKeepSwapping, "RamboHulkEnableRevive", RamboHulkEnableRevive, "RamboHulkPowerups", (int)RamboHulkPowerups, "RamboHulkOthersPowerups", (int)RamboHulkOthersPowerups, "SurviveTillDawnTimer", SurviveTillDawnTimer, "SurviveTillDawnKillGainTime", SurviveTillDawnKillGainTime, "SurviveTillDawnHunterPowerups", (int)SurviveTillDawnHunterPowerups, "SurviveTillDawnOthersPowerups", (int)SurviveTillDawnOthersPowerups, "SurviveTillDawnRespawning", SurviveTillDawnRespawning, "MaxPowerUps", MaxPowerUps, "EnableDuplicatedCharacters", EnableDuplicatedCharacters, "StartupPowerUps", (int)StartupPowerUps, "RapidPowerUpSpawning", RapidPowerUpSpawning, "SuddenDeathTimeLimit", SuddenDeathTimeLimit, "MatchScoreLimit", MatchScoreLimit, "TeamGoldenBoomerang", TeamGoldenBoomerang, "TeamGoldenBoomerangTimeLimit", TeamGoldenBoomerangTimeLimit, "BoomerangSize", BoomerangSize, "LevelPicker", "CameraFlip", CameraFlip, "CameraFlipRandom", CameraFlipRandom, "ShieldCounter", ShieldCounter, "MultiBumerangSplit", "MaxDecoyCount", MaxDecoyCount, "ReviveAsDecoy", ReviveAsDecoy, "MoveFasterAttackCooldown", MoveFasterAttackCooldown, "MoveFasterDashForceMultiplier", MoveFasterDashForceMultiplier, "MoveFasterDashDurationMultiplier", MoveFasterDashDurationMultiplier, "MoveFasterDashCooldownMultiplier", MoveFasterDashCooldownMultiplier, "MoveFasterMoveSpeedMultiplier", MoveFasterMoveSpeedMultiplier, "MoveFasterTurnSpeed", MoveFasterTurnSpeed, "ReverseInputsImmunity", ReverseInputsImmunity, "ReverseInputsDuration", ReverseInputsDuration, "FlyingPowerUp", (int)FlyingPowerUp, "FlyingDuration", FlyingDuration, "FirePowerBurnDuration", FirePowerBurnDuration, "FirePowerImmunityToFire", FirePowerImmunityToFire, "ShrinkingBoundsFinalTimer", ShrinkingBoundsFinalTimer, "ExplosiveRadiusMultiplier", ExplosiveRadiusMultiplier, "ExplosiveFreezingRadiusMultiplier", ExplosiveFreezingRadiusMultiplier, "ExplosiveMiniRadiusMultiplier", ExplosiveMiniRadiusMultiplier, "BoomerangBouncinessMultiplier", BoomerangBouncinessMultiplier, "BoomerangBouncinessMultiplierTiedToPowerUp", (int)BoomerangBouncinessMultiplierTiedToPowerUp, "ShrinkingBoundsKicksOnly", ShrinkingBoundsKicksOnly);
+            string contents = string.Format("//in case of any questions - discord: {0}\r\n//version {1} {2}\r\n\r\n\r\n//Power up codes:\r\n//2 - Caffeinated; 4 - DashThroughWalls; 8 - Bamboozled; 16 - Shield; 32 - Explosive; 64 - Multi; 128 - Teleport; 256 - Fire; 512 - Extra; 1024 - Freeze; 2048 - Disguise; 8192 - Telekinesis; 32768 - Decoy\r\n\r\n//0 - Standard\r\n//1 - Power Drain mode - no spawning of power ups; you kill, you gain a power up; you die, you lose power up (1 or all)\r\n//2 - RamboHulk mode - powered up player vs the rest\r\n//3 - Survive Till Dawn mode - one player with boomerang, others without; after certain time, the boomerang switches to a different player\r\n{3}{4}\r\n\r\n[Power Drain options]\r\n{5}={6}\r\n\r\n[RamboHulk options]\r\n{7}={8}\r\n{9}={10}\r\n{11}={12}//flag values - add up the power up codes, which you want to assign\r\n{13}={14}//flag values\r\n\r\n[SurviveTillDawn options]\r\n{15}={16}\r\n{17}={18}\r\n{19}={20}//flag values - add up the power up codes, which you want to assign\r\n{21}={22}//flag values\r\n{23}={24}\r\n\r\n[Game Options]\r\n{25}={26}\r\n{27}={28}\r\n{29}={30}//flag values\r\n{31}={32}\r\n{33}={34}// 0 - default; otherwise the value is in seconds\r\n{35}={36}// 0 - default by match length\r\n{37}={38}\r\n{39}={40}\r\n{41}={42}//0-default\r\n{43}=[]//pick by level ids, i.e. [1,2,3,3,3], max level for base game is id=35, keep empty for regular rotation\r\n\r\n[CameraOptions]\r\n{44}={45}// values 0-3\r\n{46}={47}\r\n\r\n[Powerup modifiers]\r\n{48}={49}\r\n{50}=null //into how many should be split; null - default\r\n{51}={52}\r\n{53}={54} //when killed, replace existing decoy\r\n{55}={56}\r\n{57}={58}\r\n{59}={60}\r\n{61}={62}\r\n{63}={64}\r\n{65}={66}\r\n{67}={68}\r\n{69}={70}\r\n{71}={72} //pick to which power up should the flying be tied - enter code from the list above\r\n{73}={74}\r\n{75}={76}\r\n{77}={78}\r\n{79}={80}\r\n{81}={82}\r\n{83}={84}\r\n{85}={86}\r\n{87}={88}// larger the value, more it will bounce\r\n{89}={90}// 0 - for all; if power up code, then only for specific powerup\r\n\r\n[Experimantal]\r\n{91}={92}// has bugs\r\n",
+                ModAuthor, ModVersion, ModReleaseDate, //0,1,2
+                "", "", // removed gamemode
+                "PowerDrainLoseAll", PowerDrainLoseAll, //3,4
+                "RamboHulkKeepSwapping", RamboHulkKeepSwapping, //5,6 
+                "RamboHulkEnableRevive", RamboHulkEnableRevive, //7,8
+                "RamboHulkPowerups", (int)RamboHulkPowerups, //9,10
+                "RamboHulkOthersPowerups", (int)RamboHulkOthersPowerups, //11,12
+                "SurviveTillDawnTimer", SurviveTillDawnTimer, //13,14
+                "SurviveTillDawnKillGainTime", SurviveTillDawnKillGainTime, //15,16
+                "SurviveTillDawnHunterPowerups", (int)SurviveTillDawnHunterPowerups, //17, 18
+                "SurviveTillDawnOthersPowerups", (int)SurviveTillDawnOthersPowerups, //19,20
+                "SurviveTillDawnRespawning", SurviveTillDawnRespawning, //21,22
+                "MaxPowerUps", MaxPowerUps, //23,24
+                "EnableDuplicatedCharacters", EnableDuplicatedCharacters, //25,26
+                "StartupPowerUps", (int)StartupPowerUps, //27,28
+                "RapidPowerUpSpawning", RapidPowerUpSpawning, //29,30
+                "SuddenDeathTimeLimit", SuddenDeathTimeLimit, //31,32
+                "MatchScoreLimit", MatchScoreLimit, //33,34
+                "TeamGoldenBoomerang", TeamGoldenBoomerang, //35,36
+                "TeamGoldenBoomerangTimeLimit", TeamGoldenBoomerangTimeLimit, //37,38
+                "BoomerangSize", BoomerangSize, //39,40
+                "LevelPicker", //41,42
+                "CameraFlip", CameraFlip, //43,44
+                "CameraFlipRandom", CameraFlipRandom, //45,46
+                "ShieldCounter", ShieldCounter, //47,48
+                "MultiBumerangSplit", //49,50
+                "MaxDecoyCount", MaxDecoyCount, //51,52
+                "ReviveAsDecoy", ReviveAsDecoy, //53,54
+                "MoveFasterAttackCooldown", MoveFasterAttackCooldown, //55,56
+                "MoveFasterDashForceMultiplier", MoveFasterDashForceMultiplier, //57,58
+                "MoveFasterDashDurationMultiplier", MoveFasterDashDurationMultiplier, //59,60
+                "MoveFasterDashCooldownMultiplier", MoveFasterDashCooldownMultiplier, //61,62
+                "MoveFasterMoveSpeedMultiplier", MoveFasterMoveSpeedMultiplier, //63,64
+                "MoveFasterTurnSpeed", MoveFasterTurnSpeed, //65,66
+                "ReverseInputsImmunity", ReverseInputsImmunity, //67,68
+                "ReverseInputsDuration", ReverseInputsDuration, //69,70
+                "FlyingPowerUp", (int)FlyingPowerUp, //71,72
+                "FlyingDuration", FlyingDuration, //73,74
+                "FirePowerBurnDuration", FirePowerBurnDuration, //75,76
+                "FirePowerImmunityToFire", FirePowerImmunityToFire, //77,78
+                "ShrinkingBoundsFinalTimer", ShrinkingBoundsFinalTimer, //79,80
+                "ExplosiveRadiusMultiplier", ExplosiveRadiusMultiplier, //81,82
+                "ExplosiveFreezingRadiusMultiplier", ExplosiveFreezingRadiusMultiplier, //83,84
+                "ExplosiveMiniRadiusMultiplier", ExplosiveMiniRadiusMultiplier, //85,86
+                "BoomerangBouncinessMultiplier", BoomerangBouncinessMultiplier, //87,88
+                "BoomerangBouncinessMultiplierTiedToPowerUp", (int)BoomerangBouncinessMultiplierTiedToPowerUp, //89,90 
+                "ShrinkingBoundsKicksOnly", ShrinkingBoundsKicksOnly); //91,92
+
             File.WriteAllText(FileLocation, contents);
         }
     }
