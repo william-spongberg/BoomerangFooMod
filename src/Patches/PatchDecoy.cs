@@ -10,7 +10,7 @@ namespace BoomerangFoo.Patches
         {
             if (__instance.owner != null)
             {
-                DecoyPowerup.DecoyDie(__instance.owner);
+                DecoyPowerup.Instance.DecoyDie(__instance.owner);
             }
         }
     }

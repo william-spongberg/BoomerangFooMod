@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BoomerangFoo.UI;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -8,16 +9,14 @@ using UnityEngine.Playables;
 
 namespace BoomerangFoo.Powerups
 {
-    class MoveFasterPowerup
+    class MoveFasterPowerup : CustomPowerup
     {
-        public static PowerupType PowerupBitmask = PowerupType.MoveFaster;
-
-        public static float AttackCooldown = originalAttackCooldownDuration;
-        public static float DashForceMultiplier = 1f;
-        public static float DashDurationMultiplier = 1f;
-        public static float DashCooldownMultiplier = 1f;
-        public static float MoveSpeedMultiplier = 1f;
-        public static float TurnSpeed = originalTurningSpeed; 
+        public static float DefaultAttackCooldown = originalAttackCooldownDuration;
+        public static float DefaultDashForceMultiplier = 1f;
+        public static float DefaultDashDurationMultiplier = 1f;
+        public static float DefaultDashCooldownMultiplier = 1f;
+        public static float DefaultMoveSpeedMultiplier = 1f;
+        public static float DefaultTurnSpeed = originalTurningSpeed; 
 
         public static readonly FieldInfo playerAttackCooldownDuration = typeof(Player).GetField("attackCooldownDuration", BindingFlags.NonPublic | BindingFlags.Instance);
         public const float originalAttackCooldownDuration = 0.66f;
@@ -36,17 +35,103 @@ namespace BoomerangFoo.Powerups
         public static readonly FieldInfo playerWalkSpeedUnarmed = typeof(Player).GetField("walkSpeedUnarmed", BindingFlags.NonPublic | BindingFlags.Instance);
         public const float originalWalkSpeedUnarmed = 230f;
 
-        public static void Register()
+        private static MoveFasterPowerup instance;
+        public static MoveFasterPowerup Instance
         {
+            get
+            {
+                instance ??= new MoveFasterPowerup();
+                return instance;
+            }
+        }
+
+        public float AttackCooldown { get; set; }
+        public float DashForceMultiplier {  get; set; }
+        public float DashDurationMultiplier { get; set; }
+        public float DashCooldownMultiplier { get; set; }
+        public float TurnSpeed {  get; set; }
+        public float MoveSpeedMultiplier { get; set; }
+
+        protected MoveFasterPowerup()
+        {
+            Name = "Caffeinated";
+            Bitmask = PowerupType.MoveFaster;
+            AttackCooldown = DefaultAttackCooldown;
+            DashForceMultiplier = DefaultDashForceMultiplier;
+            DashDurationMultiplier = DefaultDashDurationMultiplier;
+            DashCooldownMultiplier = DefaultDashCooldownMultiplier;
+            MoveSpeedMultiplier = DefaultMoveSpeedMultiplier;
+            TurnSpeed = DefaultTurnSpeed;
+        }
+
+        public override void Activate()
+        {
+            base.Activate();
             PowerupManager.OnAcquirePowerup += AcquirePowerup;
             PowerupManager.OnRemovePowerup += RemovePowerup;
         }
 
-        public static void AcquirePowerup(Player player, List<PowerupType> powerupHistory, PowerupType newPowerup)
+        public override void Deactivate()
+        {
+            base.Deactivate();
+            PowerupManager.OnAcquirePowerup -= AcquirePowerup;
+            PowerupManager.OnRemovePowerup -= RemovePowerup;
+        }
+
+        public override void GenerateUI()
+        {
+            if (hasGeneratedUI) return;
+            base.GenerateUI();
+
+            // speedFactor
+            var speedFactor = Modifiers.CloneModifierSetting($"customPowerup.{Name}.speedFactor", "Speed Factor", "Fall protection", $"customPowerup.{Name}.header");
+            SettingIds.Add(speedFactor.id);
+
+            float[] speedValues = [0.25f, 0.5f, 0.75f, 1f, 1.25f, 1.5f, 2f, 3f, 4f, 5f, 6f];
+            string[] speedOptions = new string[speedValues.Length];
+            string[] speedHints = new string[speedOptions.Length];
+            for (int i = 0; i < speedValues.Length; i++)
+            {
+                speedOptions[i] = speedValues[i].ToString();
+                speedHints[i] = $"Multiply speed by {speedValues[i]}x";
+            }
+            speedHints[3] = "Normal caffeinated speed";
+            speedFactor.SetSliderOptions(speedOptions, 3, speedHints);
+            speedFactor.SetSliderCallback((sliderIndex) => {
+                MoveFasterPowerup.Instance.MoveSpeedMultiplier = speedValues[sliderIndex];
+                MoveFasterPowerup.Instance.TurnSpeed = originalTurningSpeed * speedValues[sliderIndex];
+            });
+
+            // attack speed
+            var attackSpeed = Modifiers.CloneModifierSetting($"customPowerup.{Name}.attackFactor", "Attack Speed", "Fall protection", $"customPowerup.{Name}.speedFactor");
+            SettingIds.Add(attackSpeed.id);
+
+            float[] attackValues = [-100, -80, -50, -30, -20, -10, 0, 10, 20, 30, 50, 80, 100];
+            string[] attackOptions = new string[attackValues.Length];
+            string[] attackHints = new string[attackOptions.Length];
+            for (int i = 0; i < attackValues.Length; i++)
+            {
+                attackOptions[i] = $"{attackValues[i]}%".ToString();
+                if (attackValues[i] < 0)
+                {
+                    attackHints[i] = $"Decrease melee speed by {-attackValues[i]}%";
+                } else
+                {
+                    attackHints[i] = $"Increase melee speed by {attackValues[i]}%";
+                }
+            }
+            attackHints[3] = "Normal caffeinated attack speed";
+            attackSpeed.SetSliderOptions(attackOptions, 6, attackHints);
+            attackSpeed.SetSliderCallback((sliderIndex) => {
+                float multiplier = (100 + attackValues[sliderIndex]) / 100f;
+                MoveFasterPowerup.Instance.AttackCooldown = originalAttackCooldownDuration / multiplier;
+            });
+        }
+        private void AcquirePowerup(Player player, List<PowerupType> powerupHistory, PowerupType newPowerup)
         {
             var previousActive = CommonFunctions.PreviousActive(powerupHistory);
 
-            if (!newPowerup.HasPowerup(PowerupBitmask) || previousActive.HasPowerup(PowerupBitmask)) return;
+            if (!newPowerup.HasPowerup(Bitmask) || previousActive.HasPowerup(Bitmask)) return;
 
             PlayerState playerState = CommonFunctions.GetPlayerState(player);
 
@@ -68,9 +153,9 @@ namespace BoomerangFoo.Powerups
             playerWalkSpeedUnarmed.SetValue(player, (float)playerWalkSpeedUnarmed.GetValue(player) * playerState.moveFasterMoveSpeedMultiplier);
         }
 
-        public static void RemovePowerup(Player player, List<PowerupType> powerupHistory, PowerupType newPowerup)
+        private void RemovePowerup(Player player, List<PowerupType> powerupHistory, PowerupType newPowerup)
         {
-            if (!newPowerup.HasPowerup(PowerupBitmask) || !player.activePowerup.HasPowerup(PowerupBitmask)) return;
+            if (!newPowerup.HasPowerup(Bitmask) || !player.activePowerup.HasPowerup(Bitmask)) return;
 
             PlayerState playerState = CommonFunctions.GetPlayerState(player);
 

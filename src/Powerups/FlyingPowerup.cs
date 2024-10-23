@@ -1,4 +1,6 @@
-﻿using BoomerangFoo.Patches;
+﻿using BoomerangFoo.GameModes;
+using BoomerangFoo.Patches;
+using BoomerangFoo.UI;
 using RewiredConsts;
 using System;
 using System.Collections.Generic;
@@ -11,24 +13,95 @@ using UnityEngine.UI;
 
 namespace BoomerangFoo.Powerups
 {
-    public class FlyingPowerup
+    public class FlyingPowerup : CustomPowerup
     {
-        public static PowerupType PowerupBitmask = _CustomSettings.FlyingPowerUp;
-        public static float Duration = _CustomSettings.FlyingDuration;
+        public static float DefaultDuration = 0.75f;
+        public static bool DefaultResetOnGround = true;
 
         static readonly FieldInfo reviveTimeUIClock = typeof(Player).GetField("reviveTimeUIClock", BindingFlags.NonPublic | BindingFlags.Instance);
         static readonly FieldInfo reviveTimeUI = typeof(Player).GetField("reviveTimeUI", BindingFlags.NonPublic | BindingFlags.Instance);
-        static readonly FieldInfo isFalling = typeof(Player).GetField("isFalling", BindingFlags.NonPublic | BindingFlags.Instance);
+        //static readonly FieldInfo isFalling = typeof(Player).GetField("isFalling", BindingFlags.NonPublic | BindingFlags.Instance);
 
-        public static void Register()
+        private static FlyingPowerup instance;
+        public static FlyingPowerup Instance
         {
+            get
+            {
+                instance ??= new FlyingPowerup();
+                return instance;
+            }
+        }
+
+        public float Duration { get; set; }
+        public bool ResetOnGround { get; set; }
+
+        protected FlyingPowerup()
+        {
+            Name = "Hovering";
+            Bitmask = PowerupType.DashThroughWalls;
+            Duration = DefaultDuration;
+            ResetOnGround = DefaultResetOnGround;
+        }
+        public override void Activate()
+        {
+            base.Activate();
             PatchPlayer.OnPreInit += PlayerInit;
             PatchPlayer.OnPostSpawnIn += PostSpawnIn;
             PatchPlayer.OnPreUpdate += PreUpdate;
             PatchPlayer.PreStartFall = PreStartFall;
         }
 
-        public static void PlayerInit(Player player)
+        public override void Deactivate()
+        {
+            base.Deactivate();
+            PatchPlayer.OnPreInit -= PlayerInit;
+            PatchPlayer.OnPostSpawnIn -= PostSpawnIn;
+            PatchPlayer.OnPreUpdate -= PreUpdate;
+            PatchPlayer.PreStartFall = null;
+        }
+
+        public override void GenerateUI()
+        {
+            if (hasGeneratedUI) return;
+            base.GenerateUI();
+
+            // hover duration
+            var flyDuration = Modifiers.CloneModifierSetting($"customPowerup.{Name}.duration", "Hover Duration", "Fall protection", $"customPowerup.{Name}.header");
+            SettingIds.Add(flyDuration.id);
+
+            float[] hoverValues = [0.25f, 0.5f, 0.75f, 1f, 1.5f, 2f, 4f, 6f, 8f, 10f, 15f, 20f, float.MaxValue / 2];
+            string[] options = new string[hoverValues.Length];
+            string[] hints = new string[options.Length];
+            options[options.Length - 1] = "Infinite";
+            hints[options.Length-1] = "Hover over hazards forever!";
+            for (int i = 0; i < hoverValues.Length-1; i++)
+            {
+                options[i] = hoverValues[i].ToString();
+                hints[i] = $"Hover for {options[i]} seconds";
+            }
+            flyDuration.SetSliderOptions(options, 3, hints);
+            flyDuration.SetSliderCallback((sliderIndex) => {
+                FlyingPowerup.Instance.Duration = hoverValues[sliderIndex];
+            });
+
+            // refresh
+            var timeRefresh = Modifiers.CloneModifierSetting($"customPowerup.{Name}.timeRefresh", "Timer Refresh", "Warm up round", $"customPowerup.{Name}.duration");
+            SettingIds.Add(timeRefresh.id);
+            timeRefresh.SetSliderOptions(["Ground", "Round"], 0, ["Refresh timer when touching ground", "Refreshes timer each round"]);
+            timeRefresh.SetSliderCallback((sliderIndex) => {
+                FlyingPowerup.Instance.ResetOnGround = (sliderIndex == 0);
+            });
+
+            // powerup
+            var powerup = Modifiers.CloneModifierSetting($"customPowerup.{Name}.powerup", "Hover Powerup", "powerupSelections", $"customPowerup.{Name}.timeRefresh");
+            powerup.ActivatePowerupLabel();
+            powerup.SetPowerupCallback(PowerupType.None, (powerups) =>
+            {
+                FlyingPowerup.Instance.Bitmask = powerups;
+            });
+        }
+
+        private void PlayerInit(Player player)
         {
             PlayerState playerState = CommonFunctions.GetPlayerState(player);
             playerState.flyingForceFall = false;
@@ -37,23 +110,22 @@ namespace BoomerangFoo.Powerups
             playerState.isFlying = false;
         }
 
-        public static void PostSpawnIn(Player player)
+        private void PostSpawnIn(Player player)
         {
             //refreshFlyingMethod.Invoke(player, null);
             RefreshFlying(player);
         }
 
-        public static void PreUpdate(Player player)
+        private void PreUpdate(Player player)
         {
-            PlayerState playerState = CommonFunctions.GetPlayerState(player);
             RunFlyingTimer(player);
         }
 
-        public static bool PreStartFall(Player player)
+        private bool PreStartFall(Player player)
         {
             PlayerState playerState = CommonFunctions.GetPlayerState(player);
 
-            if (PowerupBitmask != 0 && player.activePowerup.HasPowerup(PowerupBitmask) && !playerState.flyingForceFall)
+            if (Bitmask != 0 && player.activePowerup.HasPowerup(Bitmask) && !playerState.flyingForceFall)
             {
                 StartFlyingTimer(player, playerState.flyingDuration);
                 return false;
@@ -61,7 +133,7 @@ namespace BoomerangFoo.Powerups
             return true;
         }
 
-        public static void StartFlyingTimer(Player player, float duration)
+        private void StartFlyingTimer(Player player, float duration)
         {
             PlayerState playerState = CommonFunctions.GetPlayerState(player);
 
@@ -80,7 +152,7 @@ namespace BoomerangFoo.Powerups
             }
         }
 
-        private static void RunFlyingTimer(Player player)
+        private void RunFlyingTimer(Player player)
         {
             PlayerState playerState = CommonFunctions.GetPlayerState(player);
             var reviveClock = ((Image)(reviveTimeUIClock.GetValue(player)));
@@ -117,7 +189,7 @@ namespace BoomerangFoo.Powerups
             }
         }
 
-        public static void RefreshFlying(Player player)
+        private void RefreshFlying(Player player)
         {
             PlayerState playerState = CommonFunctions.GetPlayerState(player);
 

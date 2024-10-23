@@ -59,6 +59,7 @@ namespace BoomerangFoo.UI
                 if (!settings.ContainsKey(modifierSetting.id))
                 {
                     settings.Add(modifierSetting.id, modifierSetting);
+                    BoomerangFoo.Logger.LogInfo($"setting {modifierSetting.id}");
                 }
             }
             return settings;

@@ -1,4 +1,5 @@
-﻿using BoomerangFoo.Settings;
+﻿using BoomerangFoo.Powerups;
+using BoomerangFoo.Settings;
 using BoomerangFoo.UI;
 using System;
 using System.Collections;
@@ -203,6 +204,10 @@ namespace BoomerangFoo.GameModes
                 {
                     GameMode.selected.gameSettings.StartupPowerUps = powerups;
                 });
+            }
+            foreach (var powerup in CustomPowerup.Registered)
+            {
+                powerup.GenerateUI();
             }
         }
     }
