@@ -7,7 +7,8 @@
 	<GamePath>C:\Program Files (x86)\Steam\steamapps\common\Boomerang Fu</GamePath>
 	<AssemblyName>BoomerangFoo</AssemblyName>
     <Product>BoomerangFoo</Product>
-    <Version>0.3.1</Version>
+    <Version>0.3.2</Version>
+	<VersionSuffix>-dev.2</VersionSuffix>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <RestoreAdditionalProjectSources>
       https://api.nuget.org/v3/index.json;
@@ -72,7 +73,7 @@
 			<ExportDir>$(ProjectDir)bin\export\</ExportDir>
 			<BoomerangFuDir>$(ExportDir)/BoomerangFu</BoomerangFuDir>
 			<BepinexDir>$(BoomerangFuDir)/BepInEx</BepinexDir>
-			<ReleaseZip>$(ExportDir)$(AssemblyName)-$(Version).zip</ReleaseZip>
+			<ReleaseZip>$(ExportDir)$(AssemblyName)-$(Version)$(VersionSuffix).zip</ReleaseZip>
 			<PluginsDir>$(ExportDir)BoomerangFu\BepInEx\plugins\</PluginsDir>
 			<DownloadUrl>https://github.com/BepInEx/BepInEx/releases/download/v5.4.23.2/BepInEx_win_x64_5.4.23.2.zip</DownloadUrl>
 			<DownloadZip>$(TempDir)BepInEx.zip</DownloadZip>
@@ -85,6 +86,12 @@
 		<MakeDir Directories="$(PluginsDir)" />
 		<Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(PluginsDir)" />
 		<Exec Command="powershell -Command &quot;if (Test-Path '$(ReleaseZip)') { Remove-Item '$(ReleaseZip)' } ; Compress-Archive -Path $(ExportDir)\BoomerangFu\* -DestinationPath $(ReleaseZip)&quot;" Condition=" '$(OS)' == 'Windows_NT' " />
+
+		<ItemGroup>
+			<MyOutputFiles Include="$(OutputPath)\$(AssemblyName).dll" />
+		</ItemGroup>
+
+		<Copy SourceFiles="@(MyOutputFiles)" DestinationFolder="$(ExportDir)" SkipUnchangedFiles="true" />
 	</Target>
   
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
