@@ -14,7 +14,7 @@ namespace BoomerangFoo
         public int shieldHits = ShieldPowerup.Instance.ShieldHits;
 
         // Multiboomerang
-        public int multiBoomerangSplit = MultiboomerangPowerup.MultiBoomerangSplit;
+        public int multiBoomerangSplit = MultiBoomerangPowerup.Instance.BoomerangSplit;
 
         // Decoy
         public int maxDecoyCount = DecoyPowerup.Instance.MaxDecoyCount;

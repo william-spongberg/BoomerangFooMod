@@ -109,7 +109,7 @@ namespace BoomerangFoo
         {
             MaxPowerUps = 3;
             ShieldCounter = ShieldPowerup.Instance.ShieldHits;
-            MultiBumerangSplit = MultiboomerangPowerup.MultiBoomerangSplit;
+            MultiBumerangSplit = MultiBoomerangPowerup.Instance.BoomerangSplit;
             MaxDecoyCount = DecoyPowerup.Instance.MaxDecoyCount;
             EnableDuplicatedCharacters = true;
             RapidPowerUpSpawning = false;
@@ -195,7 +195,7 @@ namespace BoomerangFoo
                             break;
                         case "MultiBumerangSplit":
                             MultiBumerangSplit = Convert.ToInt32(text5);
-                            MultiboomerangPowerup.MultiBoomerangSplit = MultiBumerangSplit;
+                            MultiBoomerangPowerup.Instance.BoomerangSplit = MultiBumerangSplit;
                             break;
                         case "MaxDecoyCount":
                             MaxDecoyCount = Convert.ToInt32(text5);

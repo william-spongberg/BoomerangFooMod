@@ -5,6 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using BoomerangFoo.Patches;
 using BoomerangFoo.UI;
+using RewiredConsts;
+using static Actor;
+using UnityEngine.TextCore;
+using UnityEngine;
+using System.Reflection;
 
 namespace BoomerangFoo.Powerups
 {
@@ -37,6 +42,7 @@ namespace BoomerangFoo.Powerups
             base.Activate();
             PatchPlayer.OnPreInit += PlayerInit;
             PatchPlayer.OnPostCreateDecoy += CreateDecoy;
+            PatchPlayer.OnPreDie += PreDie;
         }
 
         public override void Deactivate()
@@ -44,6 +50,7 @@ namespace BoomerangFoo.Powerups
             base.Deactivate();
             PatchPlayer.OnPreInit -= PlayerInit;
             PatchPlayer.OnPostCreateDecoy -= CreateDecoy;
+            PatchPlayer.OnPreDie -= PreDie;
         }
 
         public override void GenerateUI()
@@ -69,13 +76,14 @@ namespace BoomerangFoo.Powerups
                 DecoyPowerup.Instance.MaxDecoyCount = maxValue;
             });
 
-            // revive (TODO)
-            //var revive = Modifiers.CloneModifierSetting($"customPowerup.{Name}.respawn", "Revive As Decoy", "Warm up round", $"customPowerup.{Name}.maxDecoys");
-            //SettingIds.Add(revive.id);
-            //revive.SetSliderOptions(["Off", "On"], 0, ["You die as normal", "You can take the place of your decoy"]);
-            //revive.SetSliderCallback((sliderIndex) => {
-            //    DecoyPowerup.Instance.ReviveAsDecoy = (sliderIndex == 1);
-            //});
+            //revive(TODO)
+            var revive = Modifiers.CloneModifierSetting($"customPowerup.{Name}.respawn", "Revive As Decoy", "Warm up round", $"customPowerup.{Name}.maxDecoys");
+            SettingIds.Add(revive.id);
+            revive.SetSliderOptions(["Off", "On"], 0, ["You die as normal", "You can take the place of your decoy"]);
+            revive.SetSliderCallback((sliderIndex) =>
+            {
+                DecoyPowerup.Instance.ReviveAsDecoy = (sliderIndex == 1);
+            });
         }
 
         private void PlayerInit(Player player) 
@@ -85,6 +93,14 @@ namespace BoomerangFoo.Powerups
             // TODO reviveAsDecoy
             playerState.reviveAsDecoy = ReviveAsDecoy;
             playerState.decoyCounter = 0;
+        }
+
+        private void PreDie(Player player)
+        {
+            if (ReviveAsDecoy && RespawnAsDecoy(player))
+            {
+                PlayerDiePatch.stopDie = true;
+            }
         }
 
         private void CreateDecoy(Player player)
@@ -101,6 +117,64 @@ namespace BoomerangFoo.Powerups
             playerState.decoyCounter--;
             if (playerState.decoyCounter < 0) playerState.decoyCounter = 0;
             player.hasCreatedDecoy = playerState.decoyCounter >= playerState.maxDecoyCount;
+        }
+
+        private static readonly FieldInfo playerDustTrail = typeof(Player).GetField("dustTrail", BindingFlags.NonPublic | BindingFlags.Instance);
+        private static readonly MethodInfo playerBreakDisguise = typeof(Player).GetMethod("BreakDisguise", BindingFlags.NonPublic | BindingFlags.Instance);
+        private static readonly MethodInfo playerStopRetrieve = typeof(Player).GetMethod("StopRetrieve", BindingFlags.NonPublic | BindingFlags.Instance);
+        private static readonly MethodInfo playerStopDash = typeof(Player).GetMethod("StopDash", BindingFlags.NonPublic | BindingFlags.Instance);
+        private static readonly MethodInfo playerNotifyPlantsOfDeath = typeof(Player).GetMethod("NotifyPlantsOfDeath", BindingFlags.NonPublic | BindingFlags.Instance);
+        private static readonly MethodInfo playerGetMoveSpeed = typeof(Player).GetMethod("GetMoveSpeed", BindingFlags.NonPublic | BindingFlags.Instance);
+
+        protected bool RespawnAsDecoy(Player player)
+        {
+            PlayerState playerState = CommonFunctions.GetPlayerState(player);
+            Decoy decoy = Singleton<GameManager>.Instance.activeDecoys.FirstOrDefault((Decoy i) => i.playerID == player.playerID);
+            if (decoy == null || playerState.decoyCounter == 0)
+            {
+                return false;
+            }
+            player.activePowerup &= ~PowerupType.Decoy;
+            player.powerupHistory.Remove(PowerupType.Decoy);
+            decoy.Die(DeathType.telefrag);
+            var dustTrail = (playerDustTrail.GetValue(player) as ParticleSystem);
+            dustTrail.Stop();
+            if (player.moveFasterPFX.gameObject.activeSelf)
+            {
+                player.moveFasterPFX.Stop();
+            }
+            Singleton<ParticleManager>.Instance.PlayPFX(PFXType.Teleport, player.transform.position, player.character.Color);
+            player.transform.SetParent(null, worldPositionStays: true);
+            player.interpolatedTransform.ForgetPreviousTransforms();
+            player.transform.position = new Vector3(decoy.transform.position.x, decoy.transform.position.y, player.transform.position.z);
+            player.interpolatedTransform.ForgetPreviousTransforms();
+            Singleton<ParticleManager>.Instance.PlayPFX(PFXType.TeleportExit, player.transform.position, player.character.Color);
+            dustTrail.Play();
+            if (player.moveFasterPFX.gameObject.activeSelf)
+            {
+                player.moveFasterPFX.Play();
+            }
+            playerBreakDisguise.Invoke(player, null);
+            playerStopRetrieve.Invoke(player, null);
+            player.character.anim.SetTrigger("Teleport");
+            if (player.IsDashing)
+            {
+                player.dashTrail.Stop();
+                playerStopDash.Invoke(player, [true]);
+            }
+            player.illuminatePFX.Play();
+            player.attackCooldownTimer = 0f;
+            Singleton<AudioManager>.Instance.PlayOneShotAt("event:/powerups/teleport", player.transform.position);
+            if (player.isWading)
+            {
+                playerNotifyPlantsOfDeath.Invoke(player, null);
+            }
+            player.character.Reset();
+            player.character.anim.SetFloat("MoveSpeed", (float)playerGetMoveSpeed.Invoke(player, null));
+            player.physicsCollider.enabled = true;
+            player.damageCollider.enabled = true;
+            player.actorState = ActorState.Alive;
+            return true;
         }
     }
 }

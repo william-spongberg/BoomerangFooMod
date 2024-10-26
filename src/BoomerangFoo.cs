@@ -33,6 +33,7 @@ public class BoomerangFoo : BaseUnityPlugin
         CustomPowerup.Registered.Add(FirePowerup.Instance);
         CustomPowerup.Registered.Add(FlyingPowerup.Instance);
         CustomPowerup.Registered.Add(MoveFasterPowerup.Instance);
+        CustomPowerup.Registered.Add(MultiBoomerangPowerup.Instance);
         CustomPowerup.Registered.Add(ShieldPowerup.Instance);
         CustomPowerup.ActivateAll();
 

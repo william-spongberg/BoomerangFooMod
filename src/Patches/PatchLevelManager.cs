@@ -21,6 +21,14 @@ namespace BoomerangFoo.Patches
 
         static void Prefix(LevelManager __instance)
         {
+
+            // print the level ids
+            //for (int i = 0; i < __instance.levelAssets.Count; i++)
+            //{
+            //    var level = __instance.levelAssets[i];
+            //    BoomerangFoo.Logger.LogInfo($"Level {i}: {level.name}; {level.minPlayers}-{level.maxPlayers} players; {string.Join(",", level.supportedMatchTypes)}");
+            //}
+
             if (_CustomSettings.LevelPicker != null && _CustomSettings.LevelPicker.Length > 0)
             {
                 chosenLevels = _CustomSettings.LevelPicker;

@@ -55,26 +55,28 @@ namespace BoomerangFoo.Powerups
             var duration = Modifiers.CloneModifierSetting($"customPowerup.{Name}.duration", "Duration", "Fall protection", $"customPowerup.{Name}.header");
             SettingIds.Add(duration.id);
 
-            string[] options = ["1","2","3","4","6","9","12","15","Infinite"];
+            float[] durationValues = [1f, 2f, 3f, 4f, 6f, 9f, 12f, 15f, float.MaxValue / 2];
+            string[] options = new string[durationValues.Length];
             string[] hints = new string[options.Length];
+            options[options.Length - 1] = "Infinite";
             hints[options.Length - 1] = "Lasts until end of round";
             for (int i = 0; i < options.Length-1; i++)
             {
+                options[i] = durationValues[i].ToString();
                 hints[i] = $"Bamboozled for {options[i]} seconds";
             }
             duration.SetSliderOptions(options, 4, hints);
             duration.SetSliderCallback((sliderIndex) => {
-                float duration = sliderIndex == (options.Length - 1) ? float.MaxValue / 2 : (sliderIndex + 1);
-                BamboozlePowerup.Instance.Duration = duration;
+                BamboozlePowerup.Instance.Duration = durationValues[sliderIndex];
             });
 
             // invulnerable
-            var invulnerable = Modifiers.CloneModifierSetting($"customPowerup.{Name}.invulnerable", "Invulnerability", "Warm up round", $"customPowerup.{Name}.duration");
-            SettingIds.Add(invulnerable.id);
-            invulnerable.SetSliderOptions(["Off", "On"], 0, ["", "Cannot die while bamboozled"]);
-            duration.SetSliderCallback((sliderIndex) => {
-                BamboozlePowerup.Instance.Immunity = (sliderIndex == 1);
-            });
+            //var invulnerable = Modifiers.CloneModifierSetting($"customPowerup.{Name}.invulnerable", "Invulnerability", "Warm up round", $"customPowerup.{Name}.duration");
+            //SettingIds.Add(invulnerable.id);
+            //invulnerable.SetSliderOptions(["Off", "On"], 0, ["", "Cannot die while bamboozled"]);
+            //invulnerable.SetSliderCallback((sliderIndex) => {
+            //    BamboozlePowerup.Instance.Immunity = (sliderIndex == 1);
+            //});
         }
 
         private void PlayerInit(Player player)

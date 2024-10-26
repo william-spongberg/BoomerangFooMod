@@ -177,10 +177,19 @@ namespace BoomerangFoo.Patches
     [HarmonyPatch(typeof(Player), nameof(Player.Die))]
     class PlayerDiePatch
     {
-        static void Prefix(Player __instance)
+        public static bool stopDie = false;
+
+        static bool Prefix(Player __instance)
         {
             GameManagerAddPlayerKillPatch.killedPlayer = __instance;
             PatchPlayer.InvokePreDie(__instance);
+
+            if (stopDie)
+            {
+                stopDie = false;
+                return false;
+            }
+            return true;
         }
 
         static void Postfix(Player __instance)
