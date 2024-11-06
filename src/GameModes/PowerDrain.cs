@@ -1,4 +1,5 @@
 using BoomerangFoo.Patches;
+using BoomerangFoo.UI;
 using RewiredConsts;
 using System.Linq;
 using System.Reflection;
@@ -8,7 +9,10 @@ namespace BoomerangFoo.GameModes
 {
     public class PowerDrain : GameMode
     {
-        private MethodInfo stopShield = typeof(Player).GetMethod("StopShield", BindingFlags.NonPublic | BindingFlags.Instance);
+        private readonly MethodInfo stopShield = typeof(Player).GetMethod("StopShield", BindingFlags.NonPublic | BindingFlags.Instance);
+
+        public int PowerupsLostOnDeath = 1;
+        public bool GivePityShield = false;
 
         public PowerDrain() : base("PowerDrain", "Power Drain", "Kill to steal powers", SettingsManager.MatchType.DeathMatch, false, 0)
         {
@@ -20,7 +24,7 @@ namespace BoomerangFoo.GameModes
             PatchPlayer.OnPostDie += OnDeath;
             PatchGameManager.OnPreAddPlayerKill += OnAddPlayerKill;
             PatchPlayer.OnPostGetReady += OnGetReady;
-            PatchLevelManager.BlockPowerupSpawn = true;
+            //PatchLevelManager.BlockPowerupSpawn = true;
         }
 
         public override void Unhook()
@@ -28,19 +32,59 @@ namespace BoomerangFoo.GameModes
             PatchPlayer.OnPostDie -= OnDeath;
             PatchGameManager.OnPreAddPlayerKill -= OnAddPlayerKill;
             PatchPlayer.OnPostGetReady -= OnGetReady;
-            PatchLevelManager.BlockPowerupSpawn = false;
+            //PatchLevelManager.BlockPowerupSpawn = false;
+        }
+
+        public override void RegisterSettings()
+        {
+            string headerId = $"gameMode.{id}.header";
+            var header = Modifiers.CloneModifierSetting(headerId, name, "Boomerangs", "Friendly fire");
+
+            string lossId = $"gameMode.{id}.powerupLoss";
+            var loss = Modifiers.CloneModifierSetting(lossId, "Powerups Lost", "Warm up round", headerId);
+            string[] options = new string[5];
+            string[] hints = new string[5];
+            options[0] = "All";
+            hints[0] = "Clears all powerups on death";
+            for (int i = 1; i < options.Length; i++)
+            {
+                options[i] = i.ToString();
+                hints[i] = $"Lose {i} powerups on death";
+            }
+            loss.SetSliderOptions(options, 1, hints);
+            loss.SetGameStartCallback((gameMode, sliderIndex) =>
+            {
+                if (gameMode is PowerDrain drain)
+                {
+                    drain.PowerupsLostOnDeath = sliderIndex > 0 ? sliderIndex : 100;
+                }
+            });
+
+            string shieldId = $"gameMode.{id}.pityShield";
+            var swap = Modifiers.CloneModifierSetting(shieldId, "Pity Shield", "Warm up round", lossId);
+            swap.SetSliderOptions(["Off", "On"], 1, ["No shield", "Give a shield to powerupless players"]);
+            swap.SetGameStartCallback((gameMode, sliderIndex) =>
+            {
+                if (gameMode is PowerDrain drain)
+                {
+                    drain.GivePityShield = (sliderIndex == 1);
+                }
+            });
         }
 
         public void OnDeath(Player player)
         {
-            if (_CustomSettings.PowerDrainLoseAll)
+            if (PowerupsLostOnDeath > 16)
             {
                 player.ClearPowerups();
+                return;
             }
-            else if (player.activePowerup != 0 && player.powerupHistory.Any())
-            {
-                player.activePowerup &= ~player.powerupHistory[0];
-                player.powerupHistory.RemoveAt(0);
+            for (int i = 0; i < PowerupsLostOnDeath; i++) {
+                if (player.activePowerup != 0 && player.powerupHistory.Any())
+                {
+                    player.activePowerup &= ~player.powerupHistory[0];
+                    player.powerupHistory.RemoveAt(0);
+                }
             }
         }
 
@@ -55,7 +99,7 @@ namespace BoomerangFoo.GameModes
 
         public void OnGetReady(Player player)
         {
-            if (player.activePowerup == PowerupType.None)
+            if (GivePityShield && player.activePowerup == PowerupType.None)
             {
                 player.StartShield();
             }

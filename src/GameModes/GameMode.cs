@@ -85,6 +85,7 @@ namespace BoomerangFoo.GameModes
             Singleton<SettingsManager>.Instance.teamMatch = selected.teamMatch;
             selected.Hook();
             selected.isHooked = true;
+            Modifiers.ShowSelectedGameMode(selected.id);
             BoomerangFoo.Logger.LogInfo($"[Slot {gamemodeId}] Selected gamemode {selected.id}!");
         }
 

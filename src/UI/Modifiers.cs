@@ -66,6 +66,11 @@ namespace BoomerangFoo.UI
 
         public static ModifierSetting CloneModifierSetting(string id, string newLabel, string cloneSetting, string attachSetting)
         {
+            if (settings.ContainsKey(id))
+            {
+                // Don't duplicate
+                return settings[id];
+            }
             if (!settings.ContainsKey(cloneSetting))
             {
                 BoomerangFoo.Logger.LogError($"Could not clone modifier setting {cloneSetting}");
@@ -88,6 +93,24 @@ namespace BoomerangFoo.UI
             var newSetting = new ModifierSetting(cloneModifier.type, id, newLabel, newSettingGO, slider);
             settings[newSetting.id] = newSetting;
             return newSetting;
+        }
+
+        public static void ShowSelectedGameMode(string gameModeId)
+        {
+            foreach (var setting in settings.Values)
+            {
+                if (setting.id.StartsWith("gameMode"))
+                {
+                    if (setting.id.StartsWith($"gameMode.{gameModeId}"))
+                    {
+                        setting?.gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        setting?.gameObject.SetActive(false);
+                    }
+                }
+            }
         }
     }
 

@@ -97,7 +97,7 @@ namespace BoomerangFoo.Patches
         {
             PatchPlayer.InvokePreInit(__instance);
             PowerupManager.powerupHistories[__instance.powerupHistory] = __instance;
-            activePowerups.SetValue(__instance, _CustomSettings.MaxPowerUps);
+            activePowerups.SetValue(__instance, GameMode.selected.gameSettings.MaxPowerups);
         }
     }
 

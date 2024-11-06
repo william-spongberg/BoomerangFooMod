@@ -4,6 +4,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using BoomerangFoo.Patches;
+using BoomerangFoo.Powerups;
+using BoomerangFoo.UI;
 using RewiredConsts;
 using UnityEngine;
 using UnityEngine.TextCore;
@@ -12,8 +14,13 @@ namespace BoomerangFoo.GameModes
 {
     public class RamboHulk : GameMode
     {
-        public int RamboHulkKilledBy = -1;
-        public Player RamboHulkPlayer = null;
+        public bool KeepSwapping = true;
+        public bool EnableRevive = false;
+        public PowerupType RamboHulkPowers = PowerupType.None;
+        public PowerupType OthersPowerups = PowerupType.None;
+
+        private int RamboHulkKilledBy = -1;
+        private Player RamboHulkPlayer = null;
 
         private MethodInfo stopShield = typeof(Player).GetMethod("StopShield", BindingFlags.NonPublic | BindingFlags.Instance);
         private MethodInfo setAppearanceColors = typeof(Player).GetMethod("SetAppearanceColors", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -27,7 +34,7 @@ namespace BoomerangFoo.GameModes
             // TODO CharacterBubbleTea
             // TODO CharacterMilk
             // TODO GameManager.OpponentsLeftStandingNow
-            Singleton<SettingsManager>.Instance.MatchSettings.teamRevives = _CustomSettings.RamboHulkEnableRevive;
+            Singleton<SettingsManager>.Instance.MatchSettings.teamRevives = EnableRevive;
             PatchLevelManager.BlockPowerupSpawn = true;
             PatchPlayer.OnPostGetReady += OnGetReady;
             PatchPlayer.OnPreDie += OnDie;
@@ -37,6 +44,7 @@ namespace BoomerangFoo.GameModes
             PatchGameManager.OnPreStartRoundSequence += ResolveRamboHulkRound;
             PatchGameManager.OnPostUpdate += ResolveRamboHulkRound;
             PatchGameManager.PlayerRelationship = PlayerRelationship;
+            RamboHulkKilledBy = -1;
             // TODO PlayerAI (revives)
             // TODO Player.Update (skull particles)
         }
@@ -50,6 +58,58 @@ namespace BoomerangFoo.GameModes
             PatchGameManager.OnPostPrepareRound -= ResolveRamboHulkRound;
             PatchGameManager.OnPreStartRoundSequence -= ResolveRamboHulkRound;
             PatchGameManager.PlayerRelationship = null;
+        }
+
+        public override void RegisterSettings()
+        {
+            string headerId = $"gameMode.{id}.header";
+            var header = Modifiers.CloneModifierSetting(headerId, name, "Boomerangs", "Friendly fire");
+
+            string swapId = $"gameMode.{id}.swap";
+            var swap = Modifiers.CloneModifierSetting(swapId, "Swap On Death", "Warm up round", headerId);
+            swap.SetSliderOptions(["Off", "On"], 1, ["Round ends when juggernaut dies", "You take the juggernaut's place"]);
+            swap.SetGameStartCallback((gameMode, sliderIndex) =>
+            {
+                if (gameMode is RamboHulk rambo)
+                {
+                    rambo.KeepSwapping = (sliderIndex == 1);
+                }
+            });
+
+            // powerup
+            string hulkPowerId = $"gameMode.{id}.hulkPowerup";
+            var powerup = Modifiers.CloneModifierSetting(hulkPowerId, "Juggernaut Powerup", "powerupSelections", swapId);
+            powerup.PreparePowerupToggles(PowerupType.MoveFaster | PowerupType.DashThroughWalls | PowerupType.ExtraDisc);
+            powerup.SetGameStartCallback((gameMode, powerups) =>
+            {
+                if (gameMode is RamboHulk rambo)
+                {
+                    rambo.RamboHulkPowers = (PowerupType)powerups;
+                }
+            });
+
+            string reviveId = $"gameMode.{id}.revive";
+            var revive = Modifiers.CloneModifierSetting(reviveId, "Revive Teammates", "Warm up round", hulkPowerId);
+            revive.SetSliderOptions(["Off", "On"], 0, ["Cannot revive other peasants", "Revive your fellow peasants"]);
+            revive.SetGameStartCallback((gameMode, sliderIndex) =>
+            {
+                if (gameMode is RamboHulk rambo)
+                {
+                    rambo.EnableRevive = (sliderIndex == 1);
+                }
+            });
+
+            // other
+            string otherPowerId = $"gameMode.{id}.otherPowerup";
+            var otherPowerup = Modifiers.CloneModifierSetting(otherPowerId, "Peasant Powerups", "powerupSelections", reviveId);
+            otherPowerup.PreparePowerupToggles(PowerupType.None);
+            otherPowerup.SetGameStartCallback((gameMode, powerups) =>
+            {
+                if (gameMode is RamboHulk rambo)
+                {
+                    rambo.OthersPowerups = (PowerupType)powerups;
+                }
+            });
         }
 
         public void OnGetReady(Player player)
@@ -86,7 +146,7 @@ namespace BoomerangFoo.GameModes
         {
             if (killed == RamboHulkPlayer)
             {
-                if (_CustomSettings.RamboHulkKeepSwapping)
+                if (KeepSwapping)
                 {
                     LoadNonRamboHulkPowers(killed);
                 }
@@ -135,7 +195,7 @@ namespace BoomerangFoo.GameModes
 
         public void LoadRamboHulkPowers(Player player)
         {
-            PowerupType powerups = _CustomSettings.RamboHulkPowerups;
+            PowerupType powerups = RamboHulkPowers;
             player.ClearPowerups();
             CommonFunctions.GetEnumPowerUpValues(powerups).ForEach(delegate (PowerupType i)
             {
@@ -147,7 +207,7 @@ namespace BoomerangFoo.GameModes
 
         public void LoadNonRamboHulkPowers(Player player)
         {
-            PowerupType powerups = _CustomSettings.RamboHulkOthersPowerups;
+            PowerupType powerups = OthersPowerups;
             player.ClearPowerups();
             CommonFunctions.GetEnumPowerUpValues(powerups).ForEach(delegate (PowerupType i)
             {
@@ -163,7 +223,7 @@ namespace BoomerangFoo.GameModes
             {
                 // Select new rambo hulk
                 Player newHulk;
-                if (RamboHulkKilledBy == -1)
+                if (RamboHulkKilledBy < 0 || RamboHulkKilledBy >= gameManager.players.Count)
                 {
                     var alivePlayers = gameManager.players.Where((Player i) => i.actorState != Actor.ActorState.Dead).ToList();
                     if (alivePlayers.Count == 0) return;
