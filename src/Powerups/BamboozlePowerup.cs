@@ -66,7 +66,7 @@ namespace BoomerangFoo.Powerups
                 hints[i] = $"Bamboozled for {options[i]} seconds";
             }
             duration.SetSliderOptions(options, 4, hints);
-            duration.SetSliderCallback((sliderIndex) => {
+            duration.SetGameStartCallback((gameMode, sliderIndex) => {
                 BamboozlePowerup.Instance.Duration = durationValues[sliderIndex];
             });
 

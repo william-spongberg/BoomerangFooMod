@@ -14,6 +14,9 @@ namespace BoomerangFoo.Patches
         public static event Action<GameManager> OnPostPrepareRound;
         public static void InvokePostPrepareRound(GameManager gameManager) { OnPostPrepareRound?.Invoke(gameManager); }
 
+        public static event Action<GameManager> OnPreStartMatch;
+        public static void InvokePreStartMatch(GameManager gameManager) { OnPreStartMatch?.Invoke(gameManager); }
+
         public static event Action<GameManager> OnPreStartRoundSequence;
         public static void InvokePreStartRoundSequence(GameManager gameManager) { OnPreStartRoundSequence?.Invoke(gameManager); }
 
@@ -52,6 +55,17 @@ namespace BoomerangFoo.Patches
             }
         }
     }
+
+    [HarmonyPatch(typeof(GameManager), nameof(GameManager.StartMatch))]
+    class GameManagerStartMatchPatch
+    {
+
+        static void Prefix(GameManager __instance)
+        {
+            PatchGameManager.InvokePreStartMatch(__instance);
+        }
+    }
+
     [HarmonyPatch(typeof(GameManager), "StartRoundSequence")]
     class GameManagerStartRoundSequencePatch
     {

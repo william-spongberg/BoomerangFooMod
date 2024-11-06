@@ -1,0 +1,19 @@
+Match rules
+Match length
+Victory condition
+Fall protection
+Warm up round
+Auto balance
+Sudden death time limit
+Seek Attempts
+Seek Time
+Teams
+Revive dead teammates
+Friendly fire
+Powerups
+Available powerups
+powerupSelections
+Powerup spawn rate
+Boomerangs
+Pull back
+Homing

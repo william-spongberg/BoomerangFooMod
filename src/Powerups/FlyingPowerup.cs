@@ -80,7 +80,7 @@ namespace BoomerangFoo.Powerups
                 hints[i] = $"Hover for {options[i]} seconds";
             }
             flyDuration.SetSliderOptions(options, 3, hints);
-            flyDuration.SetSliderCallback((sliderIndex) => {
+            flyDuration.SetGameStartCallback((gameMode, sliderIndex) => {
                 FlyingPowerup.Instance.Duration = hoverValues[sliderIndex];
             });
 
@@ -88,16 +88,16 @@ namespace BoomerangFoo.Powerups
             var timeRefresh = Modifiers.CloneModifierSetting($"customPowerup.{Name}.timeRefresh", "Timer Refresh", "Warm up round", $"customPowerup.{Name}.duration");
             SettingIds.Add(timeRefresh.id);
             timeRefresh.SetSliderOptions(["Ground", "Round"], 0, ["Refresh timer when touching ground", "Refreshes timer each round"]);
-            timeRefresh.SetSliderCallback((sliderIndex) => {
+            timeRefresh.SetGameStartCallback((gameMode, sliderIndex) => {
                 FlyingPowerup.Instance.ResetOnGround = (sliderIndex == 0);
             });
 
             // powerup
             var powerup = Modifiers.CloneModifierSetting($"customPowerup.{Name}.powerup", "Hover Powerup", "powerupSelections", $"customPowerup.{Name}.timeRefresh");
-            powerup.ActivatePowerupLabel();
-            powerup.SetPowerupCallback(PowerupType.None, (powerups) =>
+            powerup.PreparePowerupToggles(PowerupType.None);
+            powerup.SetGameStartCallback((gameMode, powerups) =>
             {
-                FlyingPowerup.Instance.Bitmask = powerups;
+                FlyingPowerup.Instance.Bitmask = (PowerupType)powerups;
             });
         }
 

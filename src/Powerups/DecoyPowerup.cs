@@ -70,7 +70,7 @@ namespace BoomerangFoo.Powerups
                 hints[i] = $"Can spawn up to {i} decoys.";
             }
             maxDecoys.SetSliderOptions(options, 1, hints);
-            maxDecoys.SetSliderCallback((sliderIndex) => {
+            maxDecoys.SetGameStartCallback((gameMode, sliderIndex) => {
                 // maxValue / 2 is big and no chance of overflow
                 int maxValue = sliderIndex == 0 ? int.MaxValue / 2 : sliderIndex;
                 DecoyPowerup.Instance.MaxDecoyCount = maxValue;
@@ -80,7 +80,7 @@ namespace BoomerangFoo.Powerups
             var revive = Modifiers.CloneModifierSetting($"customPowerup.{Name}.respawn", "Revive As Decoy", "Warm up round", $"customPowerup.{Name}.maxDecoys");
             SettingIds.Add(revive.id);
             revive.SetSliderOptions(["Off", "On"], 0, ["You die as normal", "You can take the place of your decoy"]);
-            revive.SetSliderCallback((sliderIndex) =>
+            revive.SetGameStartCallback((gameMode, sliderIndex) =>
             {
                 DecoyPowerup.Instance.ReviveAsDecoy = (sliderIndex == 1);
             });

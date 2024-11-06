@@ -186,67 +186,67 @@ namespace BoomerangFoo
                     string text5 = text3.Split('=')[1].Split('/')[0].Trim();
                     switch (text4)
                     {
-                        case "MaxPowerUps":
-                            MaxPowerUps = Convert.ToInt32(text5);
-                            break;
-                        case "ShieldCounter":
-                            ShieldCounter = Convert.ToInt32(text5);
-                            ShieldPowerup.Instance.ShieldHits = ShieldCounter;
-                            break;
-                        case "MultiBumerangSplit":
-                            MultiBumerangSplit = Convert.ToInt32(text5);
-                            MultiBoomerangPowerup.Instance.BoomerangSplit = MultiBumerangSplit;
-                            break;
-                        case "MaxDecoyCount":
-                            MaxDecoyCount = Convert.ToInt32(text5);
-                            DecoyPowerup.Instance.MaxDecoyCount = MaxDecoyCount;
-                            break;
-                        case "MoveFasterAttackCooldown":
-                            MoveFasterAttackCooldown = float.Parse(text5);
-                            MoveFasterPowerup.Instance.AttackCooldown = MoveFasterAttackCooldown;
-                            break;
-                        case "MoveFasterDashForceMultiplier":
-                            MoveFasterDashForceMultiplier = float.Parse(text5);
-                            MoveFasterPowerup.Instance.DashForceMultiplier = MoveFasterDashForceMultiplier;
-                            break;
-                        case "MoveFasterDashDurationMultiplier":
-                            MoveFasterDashDurationMultiplier = float.Parse(text5);
-                            MoveFasterPowerup.Instance.DashDurationMultiplier = MoveFasterDashDurationMultiplier;
-                            break;
-                        case "MoveFasterDashCooldownMultiplier":
-                            MoveFasterDashCooldownMultiplier = float.Parse(text5);
-                            MoveFasterPowerup.Instance.DashCooldownMultiplier = MoveFasterDashCooldownMultiplier;
-                            break;
-                        case "MoveFasterMoveSpeedMultiplier":
-                            MoveFasterMoveSpeedMultiplier = float.Parse(text5);
-                            MoveFasterPowerup.Instance.MoveSpeedMultiplier = MoveFasterMoveSpeedMultiplier;
-                            break;
-                        case "MoveFasterTurnSpeed":
-                            MoveFasterTurnSpeed = float.Parse(text5);
-                            MoveFasterPowerup.Instance.TurnSpeed = MoveFasterTurnSpeed;
-                            break;
-                        case "ReverseInputsImmunity":
-                            ReverseInputsImmunity = Convert.ToBoolean(text5);
-                            BamboozlePowerup.Instance.Immunity = ReverseInputsImmunity;
-                            break;
-                        case "ReverseInputsDuration":
-                            ReverseInputsDuration = float.Parse(text5);
-                            BamboozlePowerup.Instance.Duration = ReverseInputsDuration;
-                            break;
-                        case "FlyingPowerUp":
-                            FlyingPowerUp = (PowerupType)Convert.ToInt32(text5);
-                            break;
-                        case "FlyingDuration":
-                            FlyingDuration = float.Parse(text5);
-                            FlyingPowerup.Instance.Duration = FlyingDuration;
-                            break;
-                        case "FirePowerBurnDuration":
-                            FirePowerBurnDuration = float.Parse(text5);
-                            FirePowerup.Instance.BurnDuration = FirePowerBurnDuration;
-                            break;
-                        case "FirePowerImmunityToFire":
-                            FirePowerImmunityToFire = Convert.ToBoolean(text5);
-                            break;
+                        //case "MaxPowerUps":
+                        //    MaxPowerUps = Convert.ToInt32(text5);
+                        //    break;
+                        //case "ShieldCounter":
+                        //    ShieldCounter = Convert.ToInt32(text5);
+                        //    ShieldPowerup.Instance.ShieldHits = ShieldCounter;
+                        //    break;
+                        //case "MultiBumerangSplit":
+                        //    MultiBumerangSplit = Convert.ToInt32(text5);
+                        //    MultiBoomerangPowerup.Instance.BoomerangSplit = MultiBumerangSplit;
+                        //    break;
+                        //case "MaxDecoyCount":
+                        //    MaxDecoyCount = Convert.ToInt32(text5);
+                        //    DecoyPowerup.Instance.MaxDecoyCount = MaxDecoyCount;
+                        //    break;
+                        //case "MoveFasterAttackCooldown":
+                        //    MoveFasterAttackCooldown = float.Parse(text5);
+                        //    MoveFasterPowerup.Instance.AttackCooldown = MoveFasterAttackCooldown;
+                        //    break;
+                        //case "MoveFasterDashForceMultiplier":
+                        //    MoveFasterDashForceMultiplier = float.Parse(text5);
+                        //    MoveFasterPowerup.Instance.DashForceMultiplier = MoveFasterDashForceMultiplier;
+                        //    break;
+                        //case "MoveFasterDashDurationMultiplier":
+                        //    MoveFasterDashDurationMultiplier = float.Parse(text5);
+                        //    MoveFasterPowerup.Instance.DashDurationMultiplier = MoveFasterDashDurationMultiplier;
+                        //    break;
+                        //case "MoveFasterDashCooldownMultiplier":
+                        //    MoveFasterDashCooldownMultiplier = float.Parse(text5);
+                        //    MoveFasterPowerup.Instance.DashCooldownMultiplier = MoveFasterDashCooldownMultiplier;
+                        //    break;
+                        //case "MoveFasterMoveSpeedMultiplier":
+                        //    MoveFasterMoveSpeedMultiplier = float.Parse(text5);
+                        //    MoveFasterPowerup.Instance.MoveSpeedMultiplier = MoveFasterMoveSpeedMultiplier;
+                        //    break;
+                        //case "MoveFasterTurnSpeed":
+                        //    MoveFasterTurnSpeed = float.Parse(text5);
+                        //    MoveFasterPowerup.Instance.TurnSpeed = MoveFasterTurnSpeed;
+                        //    break;
+                        //case "ReverseInputsImmunity":
+                        //    ReverseInputsImmunity = Convert.ToBoolean(text5);
+                        //    BamboozlePowerup.Instance.Immunity = ReverseInputsImmunity;
+                        //    break;
+                        //case "ReverseInputsDuration":
+                        //    ReverseInputsDuration = float.Parse(text5);
+                        //    BamboozlePowerup.Instance.Duration = ReverseInputsDuration;
+                        //    break;
+                        //case "FlyingPowerUp":
+                        //    FlyingPowerUp = (PowerupType)Convert.ToInt32(text5);
+                        //    break;
+                        //case "FlyingDuration":
+                        //    FlyingDuration = float.Parse(text5);
+                        //    FlyingPowerup.Instance.Duration = FlyingDuration;
+                        //    break;
+                        //case "FirePowerBurnDuration":
+                        //    FirePowerBurnDuration = float.Parse(text5);
+                        //    FirePowerup.Instance.BurnDuration = FirePowerBurnDuration;
+                        //    break;
+                        //case "FirePowerImmunityToFire":
+                        //    FirePowerImmunityToFire = Convert.ToBoolean(text5);
+                        //    break;
                         case "PowerDrainLoseAll":
                             PowerDrainLoseAll = Convert.ToBoolean(text5);
                             break;
@@ -271,51 +271,51 @@ namespace BoomerangFoo
                         case "EnableDuplicatedCharacters":
                             EnableDuplicatedCharacters = Convert.ToBoolean(text5);
                             break;
-                        case "RapidPowerUpSpawning":
-                            RapidPowerUpSpawning = Convert.ToBoolean(text5);
-                            break;
-                        case "StartupPowerUps":
-                            StartupPowerUps = (PowerupType)Convert.ToInt32(text5);
-                            break;
-                        case "ExplosiveRadiusMultiplier":
-                            ExplosiveRadiusMultiplier = float.Parse(text5);
-                            ExplosivePowerup.Instance.RadiusMultiplier = ExplosiveRadiusMultiplier;
-                            break;
-                        case "ExplosiveFreezingRadiusMultiplier":
-                            ExplosiveFreezingRadiusMultiplier = float.Parse(text5);
-                            ExplosivePowerup.Instance.FreezingRadiusMultiplier = ExplosiveFreezingRadiusMultiplier;
-                            break;
-                        case "ExplosiveMiniRadiusMultiplier":
-                            ExplosiveMiniRadiusMultiplier = float.Parse(text5);
-                            ExplosivePowerup.Instance.MiniRadiusMultiplier = ExplosiveMiniRadiusMultiplier;
-                            break;
-                        case "SuddenDeathTimeLimit":
-                            SuddenDeathTimeLimit = float.Parse(text5);
-                            break;
-                        case "BoomerangBouncinessMultiplier":
-                            BoomerangBouncinessMultiplier = float.Parse(text5);
-                            break;
-                        case "BoomerangBouncinessMultiplierTiedToPowerUp":
-                            BoomerangBouncinessMultiplierTiedToPowerUp = (PowerupType)Convert.ToInt32(text5);
-                            break;
+                        //case "RapidPowerUpSpawning":
+                        //    RapidPowerUpSpawning = Convert.ToBoolean(text5);
+                        //    break;
+                        //case "StartupPowerUps":
+                        //    StartupPowerUps = (PowerupType)Convert.ToInt32(text5);
+                        //    break;
+                        //case "ExplosiveRadiusMultiplier":
+                        //    ExplosiveRadiusMultiplier = float.Parse(text5);
+                        //    ExplosivePowerup.Instance.RadiusMultiplier = ExplosiveRadiusMultiplier;
+                        //    break;
+                        //case "ExplosiveFreezingRadiusMultiplier":
+                        //    ExplosiveFreezingRadiusMultiplier = float.Parse(text5);
+                        //    ExplosivePowerup.Instance.FreezingRadiusMultiplier = ExplosiveFreezingRadiusMultiplier;
+                        //    break;
+                        //case "ExplosiveMiniRadiusMultiplier":
+                        //    ExplosiveMiniRadiusMultiplier = float.Parse(text5);
+                        //    ExplosivePowerup.Instance.MiniRadiusMultiplier = ExplosiveMiniRadiusMultiplier;
+                        //    break;
+                        //case "SuddenDeathTimeLimit":
+                        //    SuddenDeathTimeLimit = float.Parse(text5);
+                        //    break;
+                        //case "BoomerangBouncinessMultiplier":
+                        //    BoomerangBouncinessMultiplier = float.Parse(text5);
+                        //    break;
+                        //case "BoomerangBouncinessMultiplierTiedToPowerUp":
+                        //    BoomerangBouncinessMultiplierTiedToPowerUp = (PowerupType)Convert.ToInt32(text5);
+                        //    break;
                         case "TeamGoldenBoomerang":
                             TeamGoldenBoomerang = Convert.ToBoolean(text5);
                             break;
                         case "TeamGoldenBoomerangTimeLimit":
                             TeamGoldenBoomerangTimeLimit = float.Parse(text5);
                             break;
-                        case "MatchScoreLimit":
-                            MatchScoreLimit = int.Parse(text5);
-                            break;
+                        //case "MatchScoreLimit":
+                        //    MatchScoreLimit = int.Parse(text5);
+                        //    break;
                         case "CameraFlip":
                             CameraFlip = int.Parse(text5);
                             break;
                         case "CameraFlipRandom":
                             CameraFlipRandom = Convert.ToBoolean(text5);
                             break;
-                        case "BoomerangSize":
-                            BoomerangSize = float.Parse(text5);
-                            break;
+                        //case "BoomerangSize":
+                        //    BoomerangSize = float.Parse(text5);
+                        //    break;
                         case "SurviveTillDawnTimer":
                             SurviveTillDawnTimer = float.Parse(text5);
                             break;

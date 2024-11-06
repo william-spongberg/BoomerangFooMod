@@ -59,7 +59,7 @@ namespace BoomerangFoo.Powerups
             }
             hints[0] = "Player with fire power is a glass cannon";
             fireDuration.SetSliderOptions(options, 2, hints);
-            fireDuration.SetSliderCallback((sliderIndex) => {
+            fireDuration.SetGameStartCallback((gameMode, sliderIndex) => {
                 FirePowerup.Instance.BurnDuration = burnValues[sliderIndex];
             });
         }

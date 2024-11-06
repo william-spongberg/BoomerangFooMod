@@ -124,50 +124,58 @@ namespace BoomerangFoo.GameModes
 
         public virtual void Unhook() { }
 
+        public void GameStart()
+        {
+            foreach (var settingPair in Modifiers.settings)
+            {
+                settingPair.Value.TriggerGameStartCallback(this);
+            }
+        }
+
         public virtual void RegisterSettings()
         {
             if (!Modifiers.settings.ContainsKey("bounciness"))
             {
                 var bounciness = Modifiers.CloneModifierSetting("bounciness", "Bounciness", "Fall protection", "Homing");
                 bounciness.SetSliderOptions(["Low", "Regular", "High", "Extreme"], 1, ["20%", "100%", "200%", "400%"]);
-                bounciness.SetSliderCallback((sliderIndex) => {
+                bounciness.SetGameStartCallback((gameMode, sliderIndex) => {
                     float[] options = [0.2f, 1f, 2f, 4f];
-                    GameMode.selected.gameSettings.BoomerangBouncinessMultiplier = options[sliderIndex];
+                    gameMode.gameSettings.BoomerangBouncinessMultiplier = options[sliderIndex];
                 });
             }
             if (!Modifiers.settings.ContainsKey("boomerangSize"))
             {
                 var bounciness = Modifiers.CloneModifierSetting("boomerangSize", "Size", "Fall protection", "bounciness");
                 bounciness.SetSliderOptions(["Mini", "Regular", "Large", "Comical"], 1, ["20%", "100%", "200%", "400%"]);
-                bounciness.SetSliderCallback((sliderIndex) => {
+                bounciness.SetGameStartCallback((gameMode, sliderIndex) => {
                     float[] options = [0.2f, 1f, 2f, 4f];
-                    GameMode.selected.gameSettings.BoomerangSize = options[sliderIndex];
+                    gameMode.gameSettings.BoomerangSize = options[sliderIndex];
                 });
             }
             if (!Modifiers.settings.ContainsKey("maxPowerups"))
             {
                 var bounciness = Modifiers.CloneModifierSetting("maxPowerups", "Max Number", "Fall protection", "Powerup spawn rate");
                 bounciness.SetSliderOptions(["1", "2", "3", "4", "5", "6", "7", "8"], 2, ["1 powerup", "2 powerups", "3 powerups", "4 powerups", "5 powerups", "6 powerups", "7 powerups", "8 powerups"]);
-                bounciness.SetSliderCallback((sliderIndex) => {
+                bounciness.SetGameStartCallback((gameMode, sliderIndex) => {
                     int[] options = [1, 2, 3, 4, 5, 6, 7, 8];
-                    GameMode.selected.gameSettings.MaxPowerups = options[sliderIndex];
+                    gameMode.gameSettings.MaxPowerups = options[sliderIndex];
                 });
             }
             if (Modifiers.settings.ContainsKey("Powerup spawn rate"))
             {
                 var spawnRate = Modifiers.settings["Powerup spawn rate"];
                 spawnRate.SetSliderOptions(["0.5X", "1X", "2X", "Rapid"], 0, null);
-                spawnRate.SetSliderCallback((sliderIndex) =>
+                spawnRate.SetGameStartCallback((gameMode, sliderIndex) =>
                 {
                     if (sliderIndex <= (int)PowerupSpawnFrequency.Fast)
                     {
                         Singleton<SettingsManager>.Instance.MatchSettings.powerupSpawnFrequency = (PowerupSpawnFrequency)sliderIndex;
-                        GameMode.selected.gameSettings.RapidPowerUpSpawning = false;
+                        gameMode.gameSettings.RapidPowerUpSpawning = false;
                     }
                     else
                     {
                         Singleton<SettingsManager>.Instance.MatchSettings.powerupSpawnFrequency = PowerupSpawnFrequency.Fast;
-                        GameMode.selected.gameSettings.RapidPowerUpSpawning = true;
+                        gameMode.gameSettings.RapidPowerUpSpawning = true;
                     }
                 });
             }
@@ -183,26 +191,26 @@ namespace BoomerangFoo.GameModes
                     options[i] = (i-2).ToString();
                 }
                 matchLength.SetSliderOptions(options, 1, null);
-                matchLength.SetSliderCallback((sliderIndex) =>
+                matchLength.SetGameStartCallback((gameMode, sliderIndex) =>
                 {
                     if (sliderIndex <= (int)MatchLength.Long)
                     {
                         Singleton<SettingsManager>.Instance.MatchSettings.matchLength = (MatchLength)sliderIndex;
-                        GameMode.selected.gameSettings.MatchScoreLimit = 0;
+                        gameMode.gameSettings.MatchScoreLimit = 0;
                     }
                     else
                     {
-                        GameMode.selected.gameSettings.MatchScoreLimit = sliderIndex - 2;
+                        gameMode.gameSettings.MatchScoreLimit = sliderIndex - 2;
                     }
                 });
             }
             if (!Modifiers.settings.ContainsKey("startPowers"))
             {
                 var test = Modifiers.CloneModifierSetting("startPowers", "Starting Powers", "powerupSelections", "maxPowerups");
-                test.ActivatePowerupLabel();
-                test.SetPowerupCallback(PowerupType.None, (powerups) =>
+                test.PreparePowerupToggles(PowerupType.None);
+                test.SetGameStartCallback((gameMode, powerups) =>
                 {
-                    GameMode.selected.gameSettings.StartupPowerUps = powerups;
+                    gameMode.gameSettings.StartupPowerUps = (PowerupType)powerups;
                 });
             }
             foreach (var powerup in CustomPowerup.Registered)

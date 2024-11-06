@@ -64,7 +64,7 @@ namespace BoomerangFoo.Powerups
                 hints[i] = $"Lose shield after {i} hits";
             }
             shieldHits.SetSliderOptions(options, 1, hints);
-            shieldHits.SetSliderCallback((sliderIndex) => {
+            shieldHits.SetGameStartCallback((gameMode, sliderIndex) => {
                 // maxValue / 2 is big and no chance of overflow
                 int hits = sliderIndex == 0 ? int.MaxValue / 2 : sliderIndex; 
                 ShieldPowerup.Instance.ShieldHits = hits;

@@ -8,7 +8,7 @@
 	<AssemblyName>BoomerangFoo</AssemblyName>
     <Product>BoomerangFoo</Product>
     <Version>0.3.2</Version>
-	<VersionSuffix>-dev.2</VersionSuffix>
+	<VersionSuffix>-dev.3</VersionSuffix>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <RestoreAdditionalProjectSources>
       https://api.nuget.org/v3/index.json;

@@ -52,7 +52,7 @@ namespace BoomerangFoo.Powerups
             radiusOptions[radiusOptions.Length - 1] = "NUKE";
             radiusHints[radiusHints.Length - 1] = "nuke.";
             defaultRadius.SetSliderOptions(radiusOptions, 3, radiusHints);
-            defaultRadius.SetSliderCallback((sliderIndex) => {
+            defaultRadius.SetGameStartCallback((gameMode, sliderIndex) => {
                 ExplosivePowerup.Instance.RadiusMultiplier = radiusValues[sliderIndex];
             });
 
@@ -72,7 +72,7 @@ namespace BoomerangFoo.Powerups
             freezeOptions[freezeOptions.Length - 1] = "Ice Age";
             freezeHints[freezeHints.Length - 1] = "Global freezing";
             freezeRadius.SetSliderOptions(freezeOptions, 3, freezeHints);
-            freezeRadius.SetSliderCallback((sliderIndex) => {
+            freezeRadius.SetGameStartCallback((gameMode, sliderIndex) => {
                 ExplosivePowerup.Instance.FreezingRadiusMultiplier = freezeValues[sliderIndex];
             });
 
@@ -90,7 +90,7 @@ namespace BoomerangFoo.Powerups
             }
             miniHints[3] = "Multi-Boomerangs explosion radius is default";
             miniRadius.SetSliderOptions(miniOptions, 3, miniHints);
-            miniRadius.SetSliderCallback((sliderIndex) => {
+            miniRadius.SetGameStartCallback((gameMode, sliderIndex) => {
                 ExplosivePowerup.Instance.MiniRadiusMultiplier = miniValues[sliderIndex];
             });
         }

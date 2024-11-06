@@ -59,7 +59,6 @@ namespace BoomerangFoo.UI
                 if (!settings.ContainsKey(modifierSetting.id))
                 {
                     settings.Add(modifierSetting.id, modifierSetting);
-                    BoomerangFoo.Logger.LogInfo($"setting {modifierSetting.id}");
                 }
             }
             return settings;
@@ -86,7 +85,7 @@ namespace BoomerangFoo.UI
             labelTextMesh.text = newLabel;
             Component.Destroy(newSettingGO.transform.GetChild(0).GetComponentInChildren<Localize>());
 
-            var newSetting = new ModifierSetting(ModifierSetting.Type.Slider, id, newLabel, newSettingGO, slider);
+            var newSetting = new ModifierSetting(cloneModifier.type, id, newLabel, newSettingGO, slider);
             settings[newSetting.id] = newSetting;
             return newSetting;
         }
@@ -108,6 +107,9 @@ namespace BoomerangFoo.UI
         public string text;
         public GameObject gameObject;
         public UISliderButton slider;
+        public Action<GameMode, int> gameStartAction;
+
+        private PowerupType powerupsActive = PowerupType.None;
 
         public ModifierSetting(Type type, string id, string text, GameObject gameObject, UISliderButton slider)
         {
@@ -145,23 +147,53 @@ namespace BoomerangFoo.UI
             }
         }
 
-        public void SetSliderCallback(UnityEngine.Events.UnityAction<int> onChange)
+        //public void SetSliderCallback(UnityEngine.Events.UnityAction<int> onChange)
+        //{
+        //    slider.OnValueChanged.RemoveAllListeners();
+        //    slider.OnValueChanged.AddListener(onChange);
+        //}
+
+        public void SetGameStartCallback(Action<GameMode, int> gameStartAction, bool removeDefault = true)
         {
-            slider.OnValueChanged.RemoveAllListeners();
-            slider.OnValueChanged.AddListener(onChange);
+            if (slider != null && removeDefault)
+            {
+                slider.OnValueChanged.RemoveAllListeners();
+            }
+            
+            this.gameStartAction = gameStartAction;
         }
 
-        public void ActivatePowerupLabel()
+        public void TriggerGameStartCallback(GameMode gameMode)
         {
-            // assumes label is index 0, padding is index 1
-            gameObject.transform.GetChild(0).gameObject.SetActive(true);
-            gameObject.transform.GetChild(1).gameObject.SetActive(false);
+            if (gameStartAction == null)
+            {
+                return;
+            }
+
+            if (type == Type.Slider) {
+                if (slider == null) return;
+
+                gameStartAction.Invoke(gameMode, slider.value);
+                return;
+            }
+            if (type == Type.Powerup)
+            {
+                gameStartAction.Invoke(gameMode, (int)powerupsActive);
+                return;
+            }
         }
 
-        public void SetPowerupCallback(PowerupType defaultPowerups, Action<PowerupType> onChange)
+        public void PreparePowerupToggles(PowerupType defaultPowerups, bool useLabel = true)
         {
+            if (useLabel)
+            {
+                // assumes label is index 0, padding is index 1
+                gameObject.transform.GetChild(0).gameObject.SetActive(true);
+                gameObject.transform.GetChild(1).gameObject.SetActive(false);
+            }
+
             var toggles = gameObject.transform.GetChild(2).transform.GetComponentsInChildren<UIPowerupToggle>();
-            PowerupType powerupsActive = defaultPowerups;
+            powerupsActive = defaultPowerups;
             foreach (UIPowerupToggle toggle in toggles)
             {
                 toggle.onValueChanged.RemoveAllListeners();
@@ -175,7 +207,6 @@ namespace BoomerangFoo.UI
                     {
                         powerupsActive &= ~toggle.powerupType;
                     }
-                    onChange(powerupsActive);
                 });
                 var nav = toggle.navigation;
                 nav.mode = UnityEngine.UI.Navigation.Mode.Automatic;

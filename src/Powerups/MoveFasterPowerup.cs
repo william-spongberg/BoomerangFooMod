@@ -97,7 +97,7 @@ namespace BoomerangFoo.Powerups
             }
             speedHints[3] = "Normal caffeinated speed";
             speedFactor.SetSliderOptions(speedOptions, 3, speedHints);
-            speedFactor.SetSliderCallback((sliderIndex) => {
+            speedFactor.SetGameStartCallback((gameMode, sliderIndex) => {
                 MoveFasterPowerup.Instance.MoveSpeedMultiplier = speedValues[sliderIndex];
                 MoveFasterPowerup.Instance.TurnSpeed = originalTurningSpeed * speedValues[sliderIndex];
             });
@@ -122,7 +122,7 @@ namespace BoomerangFoo.Powerups
             }
             attackHints[3] = "Normal caffeinated attack speed";
             attackSpeed.SetSliderOptions(attackOptions, 6, attackHints);
-            attackSpeed.SetSliderCallback((sliderIndex) => {
+            attackSpeed.SetGameStartCallback((gameMode, sliderIndex) => {
                 float multiplier = (100 + attackValues[sliderIndex]) / 100f;
                 MoveFasterPowerup.Instance.AttackCooldown = originalAttackCooldownDuration / multiplier;
             });
