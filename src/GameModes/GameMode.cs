@@ -87,6 +87,8 @@ namespace BoomerangFoo.GameModes
             selected.isHooked = true;
             Modifiers.ShowSelectedGameMode(selected.id);
             BoomerangFoo.Logger.LogInfo($"[Slot {gamemodeId}] Selected gamemode {selected.id}!");
+
+            Modifiers.LoadSettings();
         }
 
         public string id;

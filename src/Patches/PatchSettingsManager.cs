@@ -1,4 +1,5 @@
 ﻿using BoomerangFoo.GameModes;
+using BoomerangFoo.UI;
 using HarmonyLib;
 using System;
 
@@ -40,6 +41,15 @@ namespace BoomerangFoo.Patches
                 __instance.teamMatch = _CustomSettings.TeamGoldenBoomerang;
             }
 
+        }
+    }
+
+    [HarmonyPatch(typeof(SettingsManager), nameof(SettingsManager.SaveModifiedMatchSettings))]
+    class SettingsManagerSaveModifiedMatchSettingsPatch
+    {
+        static void Postfix()
+        {
+            Modifiers.SaveSettings();
         }
     }
 }

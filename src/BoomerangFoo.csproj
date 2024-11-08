@@ -8,7 +8,7 @@
 	<AssemblyName>BoomerangFoo</AssemblyName>
     <Product>BoomerangFoo</Product>
     <Version>0.3.2</Version>
-	<VersionSuffix>-dev.4</VersionSuffix>
+	<VersionSuffix></VersionSuffix>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <RestoreAdditionalProjectSources>
       https://api.nuget.org/v3/index.json;
@@ -28,6 +28,10 @@
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
   </PropertyGroup>
 
+	<PropertyGroup>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+	</PropertyGroup>
+
   <ItemGroup>
     <Compile Remove=".github\**" />
     <EmbeddedResource Remove=".github\**" />
@@ -38,6 +42,7 @@
     <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
     <PackageReference Include="BepInEx.Core" Version="5.*" />
     <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
     <PackageReference Include="System.Reflection.Emit.ILGeneration" Version="4.7.0" />
     <PackageReference Include="UnityEngine.Modules" Version="2019.2.21.10310285" IncludeAssets="compile" />
@@ -57,17 +62,20 @@
 			<BepinexDir>$(GamePath)/BepInEx</BepinexDir>
 			<DownloadUrl>https://github.com/BepInEx/BepInEx/releases/download/v5.4.23.2/BepInEx_win_x64_5.4.23.2.zip</DownloadUrl>
 			<DownloadZip>$(TempDir)BepInEx.zip</DownloadZip>
+			<PluginDir>$(BepinexDir)\plugins\$(AssemblyName)</PluginDir>
 		</PropertyGroup>
-
+		
 		<Exec Command="powershell -Command &quot;If (!(Test-Path '$(DownloadZip)')) { Invoke-WebRequest -Uri '$(DownloadUrl)' -OutFile '$(DownloadZip)' }&quot;" Condition="!Exists('$(BepinexDir)')" />
 		<Exec Command="powershell -Command &quot;Expand-Archive -Path '$(DownloadZip)' -DestinationPath '$(GamePath)' -Force&quot;" Condition="!Exists('$(BepinexDir)')" />
 		<Delete Files="$(DownloadZip)" Condition="Exists('$(DownloadZip)')" />
-			
+
+		<MakeDir Directories="$(PluginDir)" />
 	    <ItemGroup>
 		    <MyOutputFiles Include="$(OutputPath)\$(AssemblyName).dll" />
+			<MyOutputFiles Include="$(OutputPath)Newtonsoft.Json.dll" />
 	    </ItemGroup>
 		
-	    <Copy SourceFiles="@(MyOutputFiles)" DestinationFolder="$(GamePath)\BepInEx\plugins" SkipUnchangedFiles="true" />
+	    <Copy SourceFiles="@(MyOutputFiles)" DestinationFolder="$(PluginDir)" SkipUnchangedFiles="true" />
 	</Target>
 
 	<Target Name="BuildReleaseZip" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
@@ -76,7 +84,7 @@
 			<BoomerangFuDir>$(ExportDir)/BoomerangFu</BoomerangFuDir>
 			<BepinexDir>$(BoomerangFuDir)/BepInEx</BepinexDir>
 			<ReleaseZip>$(ExportDir)$(AssemblyName)-$(Version)$(VersionSuffix).zip</ReleaseZip>
-			<PluginsDir>$(ExportDir)BoomerangFu\BepInEx\plugins\</PluginsDir>
+			<PluginsDir>$(ExportDir)BoomerangFu\BepInEx\plugins\$(AssemblyName)</PluginsDir>
 			<DownloadUrl>https://github.com/BepInEx/BepInEx/releases/download/v5.4.23.2/BepInEx_win_x64_5.4.23.2.zip</DownloadUrl>
 			<DownloadZip>$(TempDir)BepInEx.zip</DownloadZip>
 		</PropertyGroup>
@@ -87,13 +95,10 @@
 		
 		<MakeDir Directories="$(PluginsDir)" />
 		<Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(PluginsDir)" />
+		<Copy SourceFiles="$(OutputPath)Newtonsoft.Json.dll" DestinationFolder="$(PluginsDir)" />
 		<Exec Command="powershell -Command &quot;if (Test-Path '$(ReleaseZip)') { Remove-Item '$(ReleaseZip)' } ; Compress-Archive -Path $(ExportDir)\BoomerangFu\* -DestinationPath $(ReleaseZip)&quot;" Condition=" '$(OS)' == 'Windows_NT' " />
 
-		<ItemGroup>
-			<MyOutputFiles Include="$(OutputPath)\$(AssemblyName).dll" />
-		</ItemGroup>
-
-		<Copy SourceFiles="@(MyOutputFiles)" DestinationFolder="$(ExportDir)" SkipUnchangedFiles="true" />
+		<Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(ExportDir)" SkipUnchangedFiles="true" />
 	</Target>
   
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">

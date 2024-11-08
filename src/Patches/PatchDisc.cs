@@ -13,17 +13,21 @@ namespace BoomerangFoo.Patches
     [HarmonyPatch(typeof(Disc), nameof(Disc.MultiDiscBurst))]
     class DiscMultiDiscBurstPatch
     {
-        public static int TestStaticMethod(Disc instance)
+        public static int GetMultiBoomerangSplit(Disc instance)
         {
             PlayerState playerState = CommonFunctions.GetPlayerState(instance.DiscOwner);
-            return playerState.multiBoomerangSplit;
+            if (instance.discPowerup.HasPowerup(PowerupType.ExplosiveDisc) || instance.discPowerup.HasPowerup(PowerupType.FireDisc))
+            {
+                return Math.Max(playerState.multiBoomerangSplit - 1, 1);
+            }
+            return Math.Max(playerState.multiBoomerangSplit, 1);
         }
 
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             var codes = instructions.ToList();
             var discPowerupField = AccessTools.Field(typeof(Disc), "discPowerup");
-            var myMethod = AccessTools.Method(typeof(DiscMultiDiscBurstPatch), nameof(DiscMultiDiscBurstPatch.TestStaticMethod));
+            var myMethod = AccessTools.Method(typeof(DiscMultiDiscBurstPatch), nameof(DiscMultiDiscBurstPatch.GetMultiBoomerangSplit));
 
             int startIdx = -1;
             for (int i = 0; i < codes.Count; i++)

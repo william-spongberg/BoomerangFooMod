@@ -6,13 +6,16 @@ using TMPro;
 using UnityEngine;
 using System.Linq;
 using System.Reflection;
+using Newtonsoft.Json;
+using System.Text;
+using System.IO;
 
 namespace BoomerangFoo.UI
 {
     public class Modifiers
     {
         public static Dictionary<string, ModifierSetting> settings = new Dictionary<string, ModifierSetting>();
-
+        private static readonly FieldInfo platformData = typeof(DataManager).GetField("platformData", BindingFlags.NonPublic | BindingFlags.Instance);
         public static GameObject GetModifiersSettingsContainer(UIMenuMatchSettings matchSettingsUI)
         {
             UIMatchSettingModule modifiers = matchSettingsUI.GetMatchSettingModule(UIMatchSettingModule.MatchSetting.Modifiers);
@@ -112,6 +115,78 @@ namespace BoomerangFoo.UI
                 }
             }
         }
+
+        public static void SaveSettings()
+        {
+            if (Modifiers.settings != null)
+            {
+                PlatformData pdata = (PlatformData)platformData.GetValue(Singleton<DataManager>.Instance);
+                Dictionary<string, int> settingIndices = Modifiers.settings
+                    .Where(kvp => kvp.Value.GetSelectedIndex() >= 0 && kvp.Value.defaultIndex >= 0)
+                    .ToDictionary(
+                        kvp => kvp.Key,
+                        kvp => kvp.Value.GetSelectedIndex()
+                    );
+                string path = pdata.GetPath("customModifiers.json");
+                string json = JsonConvert.SerializeObject(settingIndices, Formatting.Indented);
+                if (string.IsNullOrEmpty(json))
+                {
+                    return;
+                }
+                byte[] bytes = Encoding.ASCII.GetBytes(json);
+                if (bytes == null || bytes.Length == 0)
+                {
+                    return;
+                }
+                else
+                {
+                    File.WriteAllBytes(path, bytes);
+                }
+            }
+        }
+
+        public static void LoadSettings()
+        {
+            BoomerangFoo.Logger.LogInfo("Loading match settings");
+            PlatformData pdata = (PlatformData)platformData.GetValue(Singleton<DataManager>.Instance);
+            string path = pdata.GetPath("customModifiers.json");
+
+            if (!pdata.FileExists(path))
+            {
+                BoomerangFoo.Logger.LogInfo("customModifiers.json does not exist");
+                return;
+            }
+            string json;
+            try
+            {
+                json = File.ReadAllText(path, Encoding.UTF8);
+
+            }
+            catch
+            {
+                // oh well we tried
+                BoomerangFoo.Logger.LogInfo("failed to read all text");
+                return;
+            }
+
+            Dictionary<string, int> settings = JsonConvert.DeserializeObject<Dictionary<string, int>>(json);
+            if (settings != null)
+            {
+                Modifiers.settings ??= [];
+                foreach (var kvp in settings)
+                {
+                    if (Modifiers.settings.ContainsKey(kvp.Key))
+                    {
+                        BoomerangFoo.Logger.LogInfo($"Setting {kvp.Key}, {kvp.Value}");
+                        Modifiers.settings[kvp.Key].SelectIndex(kvp.Value);
+                    }
+                }
+            }
+            else
+            {
+                BoomerangFoo.Logger.LogInfo("failed to deserialize");
+            }
+        }
     }
 
     public class ModifierSetting
@@ -131,6 +206,7 @@ namespace BoomerangFoo.UI
         public GameObject gameObject;
         public UISliderButton slider;
         public Action<GameMode, int> gameStartAction;
+        public int defaultIndex = -1;
 
         private PowerupType powerupsActive = PowerupType.None;
 
@@ -158,6 +234,7 @@ namespace BoomerangFoo.UI
             slider.SetMaxValue(values.Length - 1);
             slider.stringMap = values.Select(x => (LocalizedString)x).ToArray();
             slider.SetValue(defaultIndex);
+            this.defaultIndex = defaultIndex;
 
             if (hints != null)
             {
@@ -214,6 +291,7 @@ namespace BoomerangFoo.UI
                 gameObject.transform.GetChild(0).gameObject.SetActive(true);
                 gameObject.transform.GetChild(1).gameObject.SetActive(false);
             }
+            this.defaultIndex = (int)defaultPowerups;
 
             var toggles = gameObject.transform.GetChild(2).transform.GetComponentsInChildren<UIPowerupToggle>();
             powerupsActive = defaultPowerups;
@@ -234,6 +312,47 @@ namespace BoomerangFoo.UI
                 var nav = toggle.navigation;
                 nav.mode = UnityEngine.UI.Navigation.Mode.Automatic;
                 toggle.navigation = nav;
+            }
+        }
+
+        public int GetSelectedIndex()
+        {
+            if (type == Type.Slider)
+            {
+                if (slider == null) return -1;
+
+                return slider.value;
+            }
+            if (type == Type.Powerup)
+            {
+                return (int)powerupsActive;
+            }
+            return -1;
+        }
+
+        public void ResetToDefault()
+        {
+            SelectIndex(defaultIndex);
+        }
+
+        public void SelectIndex(int index)
+        {
+            if (type == Type.Slider)
+            {
+                if (slider == null || defaultIndex < 0) return;
+
+                slider.SetValue(index);
+                return;
+            }
+            if (type == Type.Powerup)
+            {
+                var toggles = gameObject.transform.GetChild(2).transform.GetComponentsInChildren<UIPowerupToggle>();
+                powerupsActive = (PowerupType)index;
+                foreach (UIPowerupToggle toggle in toggles)
+                {
+                    toggle.isOn = (powerupsActive & toggle.powerupType) != 0;   
+                }
+                return;
             }
         }
     }

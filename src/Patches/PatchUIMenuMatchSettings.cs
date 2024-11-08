@@ -160,4 +160,16 @@ namespace BoomerangFoo.Patches
             }
         }
     }
+
+    [HarmonyPatch(typeof(UIMatchSettingModifiersModule), nameof(UIMatchSettingModifiersModule.UIResponse_RestoreDefault))]
+    class UIMatchSettingModifiersModuleRestoreDefaultPatch
+    {
+        static void Postfix()
+        {
+            foreach (var modifier in Modifiers.settings.Values)
+            {
+                modifier.ResetToDefault();
+            }
+        }
+    }
 }

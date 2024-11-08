@@ -4,6 +4,7 @@ using BoomerangFoo.GameModes;
 using BoomerangFoo.Patches;
 using BoomerangFoo.Powerups;
 using HarmonyLib;
+using UnityEngine;
 
 namespace BoomerangFoo;
 
@@ -49,6 +50,15 @@ public class BoomerangFoo : BaseUnityPlugin
         PatchGameManager.OnPreStartMatch += (gameManager) =>
         {
             GameMode.selected.GameStart();
+        };
+
+        PatchGameManager.OnPostUpdate += (gameManager) =>
+        {
+            if (Input.GetKeyDown(KeyCode.F1))
+            {
+                BoomerangFoo.Logger.LogInfo("Debug mode toggled");
+                Singleton<SettingsManager>.Instance.debugMode = !Singleton<SettingsManager>.Instance.debugMode;
+            }
         };
     }
 }

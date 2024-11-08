@@ -61,7 +61,7 @@ namespace BoomerangFoo.Powerups
                 options[i] = (i+2).ToString();
                 hints[i] = $"Splits into {i+2} boomerangs";
             }
-            numBoomerangs.SetSliderOptions(options, 4, hints);
+            numBoomerangs.SetSliderOptions(options, 3, hints);
             numBoomerangs.SetGameStartCallback((gameMode, sliderIndex) => {
                 MultiBoomerangPowerup.Instance.BoomerangSplit = sliderIndex + 2;
             });
