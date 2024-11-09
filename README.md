@@ -1,7 +1,9 @@
-BoomerangFoo - Custom Boomerang Fu Mod
+![](media/logo.png)
+
+Boomerang Foo: Chaos Mod
 ======================================
 
-This is a mod for the 2020 couch PvP party game *Boomerang Fu* by Cranky Watermelon. It provides custom settings, powerup modifiers, and (soon) gamemodes. It is built with the [BepInEx](https://github.com/BepInEx/BepInEx/) runtime patching framework. The mod was originally created by @ws13sk and adapted to BepInEx by @Jeffjewett27. 
+Boomerang Foo: Chaos Mod (BFoo for short) is a mod for the 2020 couch PvP party game *Boomerang Fu* by Cranky Watermelon. BFoo provides custom settings, powerup modifiers, and gamemodes. It is built with the [BepInEx](https://github.com/BepInEx/BepInEx/) runtime patching framework. The mod was originally created by @ws13sk and adapted to BepInEx by @Jeffjewett27. 
 
 ## Installation
 
