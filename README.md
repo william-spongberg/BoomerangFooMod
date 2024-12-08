@@ -11,7 +11,7 @@ Boomerang Foo: Chaos Mod (BFoo for short) is a mod for the 2020 couch PvP party 
 2. Unzip the files into `C:\Program Files (x86)\Steam\steamapps\common\Boomerang Fu`. The BepInEx folder should be in the same folder as `Boomerang Fu.exe`.
 3. Open the game to initialize the files and configs.
 
-Note: to update, you only need to replace the `BoomerangFoo.dll` file in `Bepinex/plugins/BoomerangFoo` with the `BoomerangFoo.dll` in the releases.
+*Note: to update, you only need to replace the `BoomerangFoo.dll` file in `Bepinex/plugins/BoomerangFoo` with the `BoomerangFoo.dll` in the releases.*
 
 ## Disabling Mod
 
