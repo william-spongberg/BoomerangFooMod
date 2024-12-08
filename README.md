@@ -13,6 +13,10 @@ Boomerang Foo: Chaos Mod (BFoo for short) is a mod for the 2020 couch PvP party 
 
 Note: to update, you only need to replace the `BoomerangFoo.dll` file in `Bepinex/plugins/BoomerangFoo` with the `BoomerangFoo.dll` in the releases.
 
+## Disabling Mod
+
+The simplest way to disable the mod is to remove `Bepinex/plugins/BoomerangFoo/BoomerangFoo.dll`. Copy it to a different location and restore it when you want to enable the mod again.
+
 ## Features
 
 1. New gamemodes!
