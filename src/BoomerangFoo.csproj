@@ -7,7 +7,7 @@
 	<GamePath>C:\Program Files (x86)\Steam\steamapps\common\Boomerang Fu</GamePath>
 	<AssemblyName>BoomerangFoo</AssemblyName>
     <Product>BoomerangFoo</Product>
-    <Version>0.3.3</Version>
+    <Version>0.3.4</Version>
 	<VersionSuffix></VersionSuffix>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <RestoreAdditionalProjectSources>
@@ -106,6 +106,10 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Folder Include="bin\export\" />
+    <Folder Include="bin\export\BoomerangFu\BepInEx\config\" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Include="bin\export\boomerangfu\bepinex\config\BepInEx.cfg" />
   </ItemGroup>
 </Project>

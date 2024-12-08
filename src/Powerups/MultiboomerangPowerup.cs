@@ -51,7 +51,7 @@ namespace BoomerangFoo.Powerups
         {
             if (hasGeneratedUI) return;
             base.GenerateUI();
-            var numBoomerangs = Modifiers.CloneModifierSetting($"customPowerup.{Name}.numBoomerangs", "Split Number", "Fall protection", $"customPowerup.{Name}.header");
+            var numBoomerangs = Modifiers.CloneModifierSetting($"customPowerup.{Name}.numBoomerangs", "Split Number", "ui_label_edgeprotection", $"customPowerup.{Name}.header");
             SettingIds.Add(numBoomerangs.id);
 
             string[] options = new string[19];

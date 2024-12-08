@@ -57,7 +57,7 @@ namespace BoomerangFoo.Powerups
         {
             if (hasGeneratedUI) return;
             base.GenerateUI();
-            var maxDecoys = Modifiers.CloneModifierSetting($"customPowerup.{Name}.maxDecoys", "Maximum Decoys", "Fall protection", $"customPowerup.{Name}.header");
+            var maxDecoys = Modifiers.CloneModifierSetting($"customPowerup.{Name}.maxDecoys", "Maximum Decoys", "ui_label_edgeprotection", $"customPowerup.{Name}.header");
             SettingIds.Add(maxDecoys.id);
 
             string[] options = new string[31];
@@ -77,7 +77,7 @@ namespace BoomerangFoo.Powerups
             });
 
             //revive(TODO)
-            var revive = Modifiers.CloneModifierSetting($"customPowerup.{Name}.respawn", "Revive As Decoy", "Warm up round", $"customPowerup.{Name}.maxDecoys");
+            var revive = Modifiers.CloneModifierSetting($"customPowerup.{Name}.respawn", "Revive As Decoy", "ui_label_warmuplevel", $"customPowerup.{Name}.maxDecoys");
             SettingIds.Add(revive.id);
             revive.SetSliderOptions(["Off", "On"], 0, ["You die as normal", "You can take the place of your decoy"]);
             revive.SetGameStartCallback((gameMode, sliderIndex) =>

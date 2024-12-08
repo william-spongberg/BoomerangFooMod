@@ -38,10 +38,10 @@ namespace BoomerangFoo.GameModes
         public override void RegisterSettings()
         {
             string headerId = $"gameMode.{id}.header";
-            var header = Modifiers.CloneModifierSetting(headerId, name, "Boomerangs", "Friendly fire");
+            var header = Modifiers.CloneModifierSetting(headerId, name, "ui_boomerangs", "ui_label_friendlyfire");
 
             string lossId = $"gameMode.{id}.powerupLoss";
-            var loss = Modifiers.CloneModifierSetting(lossId, "Powerups Lost", "Warm up round", headerId);
+            var loss = Modifiers.CloneModifierSetting(lossId, "Powerups Lost", "ui_label_warmuplevel", headerId);
             string[] options = new string[5];
             string[] hints = new string[5];
             options[0] = "All";
@@ -61,7 +61,7 @@ namespace BoomerangFoo.GameModes
             });
 
             string shieldId = $"gameMode.{id}.pityShield";
-            var swap = Modifiers.CloneModifierSetting(shieldId, "Pity Shield", "Warm up round", lossId);
+            var swap = Modifiers.CloneModifierSetting(shieldId, "Pity Shield", "ui_label_warmuplevel", lossId);
             swap.SetSliderOptions(["Off", "On"], 1, ["No shield", "Give a shield to powerupless players"]);
             swap.SetGameStartCallback((gameMode, sliderIndex) =>
             {

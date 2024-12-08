@@ -32,23 +32,25 @@ namespace BoomerangFoo.UI
             {
                 var setting = container.transform.GetChild(i);
                 ModifierSetting modifierSetting;
+                string mTerm = null;
                 switch (setting.gameObject.name)
                 {
                     case "ROW_HEAD":
                         var headTextMesh = setting.GetComponentInChildren<TextMeshProUGUI>();
-                        Component.Destroy(setting.GetComponentInChildren<Localize>());
-                        modifierSetting = new ModifierSetting(ModifierSetting.Type.Head, headTextMesh.text, headTextMesh.text, setting.gameObject, null);
+                        mTerm = headTextMesh.GetComponentInChildren<Localize>().Term;
+                        modifierSetting = new ModifierSetting(ModifierSetting.Type.Head, mTerm, headTextMesh.text, setting.gameObject, null);
                         break;
                     case "ROW":
                         var label = setting.GetChild(0);
                         var labelTextMesh = label.GetComponentInChildren<TextMeshProUGUI>();
                         var slider = setting.GetChild(1).GetComponent<UISliderButton>();
-                        Component.Destroy(label.GetComponentInChildren<Localize>());
-                        modifierSetting = new ModifierSetting(ModifierSetting.Type.Slider, labelTextMesh.text, labelTextMesh.text, setting.gameObject, slider);
+                        //BoomerangFoo.Logger.LogInfo($"label mTerm: {}");
+                        mTerm = label.GetComponentInChildren<Localize>().Term;
+                        modifierSetting = new ModifierSetting(ModifierSetting.Type.Slider, mTerm, labelTextMesh.text, setting.gameObject, slider);
                         break;
                     case "ROW_TOGGLES":
                         // the powerup cluster
-                        var labelTemplate = settings["Match length"].gameObject.transform.GetChild(0);
+                        var labelTemplate = settings["ui_label_matchlength"].gameObject.transform.GetChild(0);
                         var newLabel = UnityEngine.Object.Instantiate(labelTemplate.gameObject);
                         newLabel.transform.SetParent(setting.gameObject.transform, false);
                         newLabel.transform.SetSiblingIndex(0);
@@ -90,6 +92,7 @@ namespace BoomerangFoo.UI
             var slider = newSettingGO.transform.GetChild(1).GetComponent<UISliderButton>();
             var labelTextMesh = newSettingGO.transform.GetChild(0).GetComponentInChildren<TextMeshProUGUI>();
             labelTextMesh.text = newLabel;
+            labelTextMesh.GetComponentInChildren<Localize>().Term = id;
             Component.Destroy(newSettingGO.transform.GetChild(0).GetComponentInChildren<Localize>());
 
             var newSetting = new ModifierSetting(cloneModifier.type, id, newLabel, newSettingGO, slider);

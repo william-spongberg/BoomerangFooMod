@@ -154,8 +154,29 @@ namespace BoomerangFoo.Patches
             int rowID = __instance.GetRowID(player);
             if (relationship != GameMode.Relationship.Teammate)
             {
+                // AddPlayerKill can increment own team kills. If not a teammate, reset this
                 __instance.matchScores[rowID].TeamKills = teamKills;
             }
+        }
+    }
+
+    [HarmonyPatch(typeof(GameManager), nameof(GameManager.AreOpponents), [typeof(Actor), typeof(Actor)])]
+    class GameManagerAreOpponentsPatch
+    {
+
+        static bool Prefix(GameManager __instance, Actor actor1, Actor actor2, ref bool __result)
+        {
+            Player player = actor1 as Player;
+            Player player2 = actor2 as Player;
+
+            // If no custom PlayerRelationship defined, use default behavior
+            if (PatchGameManager.PlayerRelationship == null) return true;
+            // I don't know when this can happen, but just do default behavior
+            if (player == null || player2 == null) return true;
+
+            GameMode.Relationship relationship = PatchGameManager.PlayerRelationship(__instance, player, player2);
+            __result = relationship == GameMode.Relationship.Opponent;
+            return false;
         }
     }
 }

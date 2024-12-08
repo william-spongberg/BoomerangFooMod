@@ -4,6 +4,7 @@ using BoomerangFoo.GameModes;
 using BoomerangFoo.Patches;
 using BoomerangFoo.Powerups;
 using HarmonyLib;
+using TMPro;
 using UnityEngine;
 
 namespace BoomerangFoo;
@@ -50,6 +51,7 @@ public class BoomerangFoo : BaseUnityPlugin
         PatchGameManager.OnPreStartMatch += (gameManager) =>
         {
             GameMode.selected.GameStart();
+            Singleton<SettingsManager>.Instance.PrepareMatchLength();
         };
 
         PatchGameManager.OnPostUpdate += (gameManager) =>

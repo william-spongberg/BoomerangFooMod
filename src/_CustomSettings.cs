@@ -159,7 +159,8 @@ namespace BoomerangFoo
             }
             else
             {
-                SaveSettings();
+                // Deprecating this
+                //SaveSettings();
             }
         }
 

@@ -66,7 +66,7 @@ namespace BoomerangFoo.Powerups
             base.GenerateUI();
 
             // hover duration
-            var flyDuration = Modifiers.CloneModifierSetting($"customPowerup.{Name}.duration", "Hover Duration", "Fall protection", $"customPowerup.{Name}.header");
+            var flyDuration = Modifiers.CloneModifierSetting($"customPowerup.{Name}.duration", "Hover Duration", "ui_label_edgeprotection", $"customPowerup.{Name}.header");
             SettingIds.Add(flyDuration.id);
 
             float[] hoverValues = [0.25f, 0.5f, 0.75f, 1f, 1.5f, 2f, 4f, 6f, 8f, 10f, 15f, 20f, float.MaxValue / 2];
@@ -85,7 +85,7 @@ namespace BoomerangFoo.Powerups
             });
 
             // refresh
-            var timeRefresh = Modifiers.CloneModifierSetting($"customPowerup.{Name}.timeRefresh", "Timer Refresh", "Warm up round", $"customPowerup.{Name}.duration");
+            var timeRefresh = Modifiers.CloneModifierSetting($"customPowerup.{Name}.timeRefresh", "Timer Refresh", "ui_label_warmuplevel", $"customPowerup.{Name}.duration");
             SettingIds.Add(timeRefresh.id);
             timeRefresh.SetSliderOptions(["Ground", "Round"], 0, ["Refresh timer when touching ground", "Refreshes timer each round"]);
             timeRefresh.SetGameStartCallback((gameMode, sliderIndex) => {

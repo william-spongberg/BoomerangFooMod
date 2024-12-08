@@ -52,7 +52,7 @@ namespace BoomerangFoo.Powerups
             base.GenerateUI();
 
             // duration
-            var duration = Modifiers.CloneModifierSetting($"customPowerup.{Name}.duration", "Duration", "Fall protection", $"customPowerup.{Name}.header");
+            var duration = Modifiers.CloneModifierSetting($"customPowerup.{Name}.duration", "Duration", "ui_label_edgeprotection", $"customPowerup.{Name}.header");
             SettingIds.Add(duration.id);
 
             float[] durationValues = [1f, 2f, 3f, 4f, 6f, 9f, 12f, 15f, float.MaxValue / 2];

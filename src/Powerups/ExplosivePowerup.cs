@@ -37,7 +37,7 @@ namespace BoomerangFoo.Powerups
             base.GenerateUI();
 
             // defaultRadius
-            var defaultRadius = Modifiers.CloneModifierSetting($"customPowerup.{Name}.defaultRadius", "Radius Factor", "Fall protection", $"customPowerup.{Name}.header");
+            var defaultRadius = Modifiers.CloneModifierSetting($"customPowerup.{Name}.defaultRadius", "Radius Factor", "ui_label_edgeprotection", $"customPowerup.{Name}.header");
             SettingIds.Add(defaultRadius.id);
 
             float[] radiusValues = [0.25f, 0.5f, 0.75f, 1f, 1.25f, 1.5f, 2f, 2.5f, 3f, 20f];
@@ -57,7 +57,7 @@ namespace BoomerangFoo.Powerups
             });
 
             // freezeRadius
-            var freezeRadius = Modifiers.CloneModifierSetting($"customPowerup.{Name}.freezeRadius", "Ice Factor", "Fall protection", $"customPowerup.{Name}.defaultRadius");
+            var freezeRadius = Modifiers.CloneModifierSetting($"customPowerup.{Name}.freezeRadius", "Ice Factor", "ui_label_edgeprotection", $"customPowerup.{Name}.defaultRadius");
             SettingIds.Add(defaultRadius.id);
 
             float[] freezeValues = [0.25f, 0.5f, 0.75f, 1f, 1.25f, 1.5f, 2f, 2.5f, 3f, 20f];
@@ -77,7 +77,7 @@ namespace BoomerangFoo.Powerups
             });
 
             // miniRadius
-            var miniRadius = Modifiers.CloneModifierSetting($"customPowerup.{Name}.miniRadius", "Multi-Boomerang Factor", "Fall protection", $"customPowerup.{Name}.freezeRadius");
+            var miniRadius = Modifiers.CloneModifierSetting($"customPowerup.{Name}.miniRadius", "Multi-Boomerang Factor", "ui_label_edgeprotection", $"customPowerup.{Name}.freezeRadius");
             SettingIds.Add(miniRadius.id);
 
             float[] miniValues = [0.25f, 0.5f, 0.75f, 1f, 1.25f, 1.5f, 2f, 2.5f, 3f];

@@ -84,7 +84,7 @@ namespace BoomerangFoo.Powerups
             base.GenerateUI();
 
             // speedFactor
-            var speedFactor = Modifiers.CloneModifierSetting($"customPowerup.{Name}.speedFactor", "Speed Factor", "Fall protection", $"customPowerup.{Name}.header");
+            var speedFactor = Modifiers.CloneModifierSetting($"customPowerup.{Name}.speedFactor", "Speed Factor", "ui_label_edgeprotection", $"customPowerup.{Name}.header");
             SettingIds.Add(speedFactor.id);
 
             float[] speedValues = [0.25f, 0.5f, 0.75f, 1f, 1.25f, 1.5f, 2f, 3f, 4f, 5f, 6f];
@@ -103,7 +103,7 @@ namespace BoomerangFoo.Powerups
             });
 
             // attack speed
-            var attackSpeed = Modifiers.CloneModifierSetting($"customPowerup.{Name}.attackFactor", "Attack Speed", "Fall protection", $"customPowerup.{Name}.speedFactor");
+            var attackSpeed = Modifiers.CloneModifierSetting($"customPowerup.{Name}.attackFactor", "Attack Speed", "ui_label_edgeprotection", $"customPowerup.{Name}.speedFactor");
             SettingIds.Add(attackSpeed.id);
 
             float[] attackValues = [-100, -80, -50, -30, -20, -10, 0, 10, 20, 30, 50, 80, 100];

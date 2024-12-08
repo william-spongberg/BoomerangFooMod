@@ -7,6 +7,7 @@ using UnityEngine;
 using TMPro;
 using System.Reflection;
 using BoomerangFoo.UI;
+using I2.Loc;
 
 namespace BoomerangFoo.Patches
 {
@@ -83,6 +84,12 @@ namespace BoomerangFoo.Patches
 
         static void Postfix(UIMenuMatchSettings __instance)
         {
+            BoomerangFoo.Logger.LogInfo($"Logging localization keys, {LocalizationManager.Sources.Count}");
+            foreach (var mKeyPair in LocalizationManager.Sources[0].mDictionary)
+            {
+                BoomerangFoo.Logger.LogInfo($"{mKeyPair.Key}: {LocalizationManager.GetTranslation(mKeyPair.Key)}");
+            }
+
             var gamemodeModule = __instance.GetMatchSettingModule(UIMatchSettingModule.MatchSetting.GameMode);
             if (gamemodeModule != null && !hasInitialized)
             {
@@ -99,7 +106,14 @@ namespace BoomerangFoo.Patches
                     // Set the button text and set the onClick function
                     var newButton = newChoice.transform.GetChild(0).gameObject;
                     var buttonText = newChoice.GetComponentInChildren<TextMeshProUGUI>();
-                    buttonText.text = gamemode.name;
+                    Localize localize = null;
+
+                    if (i >= 4)
+                    {
+                        buttonText.text = gamemode.name;
+                        localize = buttonText.GetComponentInChildren<I2.Loc.Localize>();
+                        Component.Destroy(localize);
+                    }
                     var uiButton = newButton.GetComponent<UIButton>();
                     uiButton.onClick.RemoveAllListeners();
                     GameMode.Slot slot = (GameMode.Slot)i;
@@ -116,8 +130,11 @@ namespace BoomerangFoo.Patches
                     // Set the hint text and destroy the localization
                     var newHint = newChoice.transform.GetChild(1).gameObject;
                     var hintText = newHint.GetComponentInChildren<TextMeshProUGUI>();;
-                    hintText.text = gamemode.hint;
-                    var localize = newHint.GetComponentInChildren<I2.Loc.Localize>();
+                    if (i >= 4)
+                    {
+                        hintText.text = gamemode.hint;
+                        localize = newHint.GetComponentInChildren<I2.Loc.Localize>();
+                    }
                     Component.Destroy(localize);
                 }
 

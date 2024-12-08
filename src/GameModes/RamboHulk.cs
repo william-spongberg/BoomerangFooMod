@@ -66,10 +66,10 @@ namespace BoomerangFoo.GameModes
         public override void RegisterSettings()
         {
             string headerId = $"gameMode.{id}.header";
-            var header = Modifiers.CloneModifierSetting(headerId, name, "Boomerangs", "Friendly fire");
+            var header = Modifiers.CloneModifierSetting(headerId, name, "ui_boomerangs", "ui_label_friendlyfire");
 
             string swapId = $"gameMode.{id}.swap";
-            var swap = Modifiers.CloneModifierSetting(swapId, "Swap On Death", "Warm up round", headerId);
+            var swap = Modifiers.CloneModifierSetting(swapId, "Swap On Death", "ui_label_warmuplevel", headerId);
             swap.SetSliderOptions(["Off", "On"], 1, ["Round ends when juggernaut dies", "You take the juggernaut's place"]);
             swap.SetGameStartCallback((gameMode, sliderIndex) =>
             {
@@ -92,7 +92,7 @@ namespace BoomerangFoo.GameModes
             });
 
             string reviveId = $"gameMode.{id}.revive";
-            var revive = Modifiers.CloneModifierSetting(reviveId, "Revive Teammates", "Warm up round", hulkPowerId);
+            var revive = Modifiers.CloneModifierSetting(reviveId, "Revive Teammates", "ui_label_warmuplevel", hulkPowerId);
             revive.SetSliderOptions(["Off", "On"], 0, ["Cannot revive other peasants", "Revive your fellow peasants"]);
             revive.SetGameStartCallback((gameMode, sliderIndex) =>
             {
@@ -117,6 +117,7 @@ namespace BoomerangFoo.GameModes
 
         public void OnGetReady(Player player)
         {
+            if (player == null) return;
             player.ClearPowerups();
             if (player == RamboHulkPlayer)
             {
@@ -130,6 +131,7 @@ namespace BoomerangFoo.GameModes
 
         public void OnDie(Player player) 
         {
+            if (player == null) return;
             if (RamboHulkPlayer == player)
             {
                 RamboHulkKilledBy = -1;
@@ -147,13 +149,14 @@ namespace BoomerangFoo.GameModes
 
         public void OnAddPlayerKill(GameManager gameManager, Player killer, Player killed)
         {
+            if (killed == null) return;
             if (killed == RamboHulkPlayer)
             {
                 if (KeepSwapping)
                 {
                     LoadNonRamboHulkPowers(killed);
                 }
-                if (killer.actorState != Actor.ActorState.Dead)
+                if (killer != null && killer.actorState != Actor.ActorState.Dead)
                 {
                     stopShield.Invoke(killer, null);
                     LoadRamboHulkPowers(killer);
@@ -178,6 +181,7 @@ namespace BoomerangFoo.GameModes
 
         public void UpdateVisuals(Player newHulk, bool isRamboHulk)
         {
+            if (newHulk == null) return;
             //newHulk.team = (isRamboHulk ? 1 : 2);
             Color color = (isRamboHulk ? Singleton<GameManager>.Instance.goldenDiscColor : newHulk.character.Color);
             ParticleSystem.MainModule main = newHulk.meleeTrailRight.main;
@@ -198,6 +202,7 @@ namespace BoomerangFoo.GameModes
 
         public void LoadRamboHulkPowers(Player player)
         {
+            if (player == null) return;
             PowerupType powerups = RamboHulkPowers;
             player.ClearPowerups();
             CommonFunctions.GetEnumPowerUpValues(powerups).ForEach(delegate (PowerupType i)
@@ -210,6 +215,7 @@ namespace BoomerangFoo.GameModes
 
         public void LoadNonRamboHulkPowers(Player player)
         {
+            if (player == null) return;
             PowerupType powerups = OthersPowerups;
             player.ClearPowerups();
             CommonFunctions.GetEnumPowerUpValues(powerups).ForEach(delegate (PowerupType i)
@@ -234,6 +240,7 @@ namespace BoomerangFoo.GameModes
                     newHulk = alivePlayers[UnityEngine.Random.Range(0, alivePlayers.Count - 1)];
                 } else
                 {
+                    if (gameManager.players.Count == 0) return;
                     newHulk = gameManager.players[RamboHulkKilledBy];
                 }
                 RamboHulkPlayer = newHulk;

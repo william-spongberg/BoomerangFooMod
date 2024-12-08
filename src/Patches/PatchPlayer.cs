@@ -235,4 +235,13 @@ namespace BoomerangFoo.Patches
             PatchPlayer.InvokePostStartPowerup(__instance, newPowerup);
         }
     }
+
+    [HarmonyPatch(typeof(Player), nameof(Player.ClearPowerups))]
+    class PlayerClearPowerupsPatch
+    {
+        static void Prefix(Player __instance)
+        {
+            PowerupManager.InvokeRemovePowerup(__instance, __instance.powerupHistory, PowerupType.None);
+        }
+    }
 }

@@ -49,7 +49,7 @@ namespace BoomerangFoo.Powerups
         {
             if (hasGeneratedUI) return;
             hasGeneratedUI = true;
-            var header = Modifiers.CloneModifierSetting($"customPowerup.{Name}.header", Name, "Boomerangs", "boomerangSize");
+            var header = Modifiers.CloneModifierSetting($"customPowerup.{Name}.header", Name, "ui_boomerangs", "boomerangSize");
             SettingIds.Add(header.id);
         }
     }

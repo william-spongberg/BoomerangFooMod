@@ -139,7 +139,7 @@ namespace BoomerangFoo.GameModes
         {
             if (!Modifiers.settings.ContainsKey("bounciness"))
             {
-                var bounciness = Modifiers.CloneModifierSetting("bounciness", "Bounciness", "Fall protection", "Homing");
+                var bounciness = Modifiers.CloneModifierSetting("bounciness", "Bounciness", "ui_label_edgeprotection", "ui_label_homing");
                 bounciness.SetSliderOptions(["Low", "Regular", "High", "Extreme"], 1, ["20%", "100%", "200%", "400%"]);
                 bounciness.SetGameStartCallback((gameMode, sliderIndex) => {
                     float[] options = [0.2f, 1f, 2f, 4f];
@@ -148,7 +148,7 @@ namespace BoomerangFoo.GameModes
             }
             if (!Modifiers.settings.ContainsKey("boomerangSize"))
             {
-                var bounciness = Modifiers.CloneModifierSetting("boomerangSize", "Size", "Fall protection", "bounciness");
+                var bounciness = Modifiers.CloneModifierSetting("boomerangSize", "Size", "ui_label_edgeprotection", "bounciness");
                 bounciness.SetSliderOptions(["Mini", "Regular", "Large", "Comical"], 1, ["20%", "100%", "200%", "400%"]);
                 bounciness.SetGameStartCallback((gameMode, sliderIndex) => {
                     float[] options = [0.2f, 1f, 2f, 4f];
@@ -157,16 +157,16 @@ namespace BoomerangFoo.GameModes
             }
             if (!Modifiers.settings.ContainsKey("maxPowerups"))
             {
-                var bounciness = Modifiers.CloneModifierSetting("maxPowerups", "Max Number", "Fall protection", "Powerup spawn rate");
+                var bounciness = Modifiers.CloneModifierSetting("maxPowerups", "Max Number", "ui_label_edgeprotection", "ui_powerup_spawn_rate");
                 bounciness.SetSliderOptions(["1", "2", "3", "4", "5", "6", "7", "8"], 2, ["1 powerup", "2 powerups", "3 powerups", "4 powerups", "5 powerups", "6 powerups", "7 powerups", "8 powerups"]);
                 bounciness.SetGameStartCallback((gameMode, sliderIndex) => {
                     int[] options = [1, 2, 3, 4, 5, 6, 7, 8];
                     gameMode.gameSettings.MaxPowerups = options[sliderIndex];
                 });
             }
-            if (Modifiers.settings.ContainsKey("Powerup spawn rate"))
+            if (Modifiers.settings.ContainsKey("ui_powerup_spawn_rate"))
             {
-                var spawnRate = Modifiers.settings["Powerup spawn rate"];
+                var spawnRate = Modifiers.settings["ui_powerup_spawn_rate"];
                 spawnRate.SetSliderOptions(["0.5X", "1X", "2X", "Rapid"], 0, null);
                 spawnRate.SetGameStartCallback((gameMode, sliderIndex) =>
                 {
@@ -182,9 +182,9 @@ namespace BoomerangFoo.GameModes
                     }
                 });
             }
-            if (Modifiers.settings.ContainsKey("Match length"))
+            if (Modifiers.settings.ContainsKey("ui_label_matchlength"))
             {
-                var matchLength = Modifiers.settings["Match length"];
+                var matchLength = Modifiers.settings["ui_label_matchlength"];
                 string[] options = new string[33];
                 options[0] = "Quick";
                 options[1] = "Standard";

@@ -47,7 +47,7 @@ namespace BoomerangFoo.Powerups
             base.GenerateUI();
 
             // defaultRadius
-            var fireDuration = Modifiers.CloneModifierSetting($"customPowerup.{Name}.defaultRadius", "Burning Survival", "Fall protection", $"customPowerup.{Name}.header");
+            var fireDuration = Modifiers.CloneModifierSetting($"customPowerup.{Name}.defaultRadius", "Burning Survival", "ui_label_edgeprotection", $"customPowerup.{Name}.header");
             SettingIds.Add(fireDuration.id);
 
             float[] burnValues = [0.2f, 1.25f, 2.5f, 4f, 8f, 20f];
