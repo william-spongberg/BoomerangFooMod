@@ -1,6 +1,7 @@
 ﻿using System;
 using HarmonyLib;
 using BoomerangFoo.GameModes;
+using System.Collections;
 
 namespace BoomerangFoo.Patches
 {
@@ -20,8 +21,7 @@ namespace BoomerangFoo.Patches
         public static event Action<GameManager> OnPreStartRoundSequence;
         public static void InvokePreStartRoundSequence(GameManager gameManager) { OnPreStartRoundSequence?.Invoke(gameManager); }
 
-        public static event Action<GameManager> OnPreCheckPlayersLeftStanding;
-        public static void InvokePreCheckPlayersLeftStanding(GameManager gameManager) { OnPreCheckPlayersLeftStanding?.Invoke(gameManager); }
+        public static bool NumPlayerCheckDisabled = false;
 
         public static Func<GameManager, int> OpponentsLeftStandingNow;
 
@@ -80,9 +80,20 @@ namespace BoomerangFoo.Patches
     class GameManagerCheckPlayersLeftStandingPatch
     {
 
-        static void Prefix(GameManager __instance)
+        static bool Prefix(GameManager __instance, ref IEnumerator __result)
         {
-            PatchGameManager.InvokePreCheckPlayersLeftStanding(__instance);
+            // If player check is disabled, don't run coroutine
+            if (PatchGameManager.NumPlayerCheckDisabled)
+            {
+                __result = EmptyCoroutine();
+                return false;
+            }
+            return true;
+        }
+
+        private static IEnumerator EmptyCoroutine()
+        {
+            yield break; // Ends immediately
         }
     }
 

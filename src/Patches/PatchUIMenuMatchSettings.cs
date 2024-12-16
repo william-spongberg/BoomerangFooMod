@@ -79,16 +79,15 @@ namespace BoomerangFoo.Patches
     [HarmonyPatch(typeof(UIMenuMatchSettings), nameof(UIMenuMatchSettings.Init))]
     class UIMenuMatchSettingsInitPatch
     {
-        private static MethodInfo goToNextSetting = typeof(Player).GetMethod("GoToNextSetting", BindingFlags.NonPublic | BindingFlags.Instance);
         private static bool hasInitialized = false;
 
         static void Postfix(UIMenuMatchSettings __instance)
         {
-            BoomerangFoo.Logger.LogInfo($"Logging localization keys, {LocalizationManager.Sources.Count}");
-            foreach (var mKeyPair in LocalizationManager.Sources[0].mDictionary)
-            {
-                BoomerangFoo.Logger.LogInfo($"{mKeyPair.Key}: {LocalizationManager.GetTranslation(mKeyPair.Key)}");
-            }
+            //BoomerangFoo.Logger.LogInfo($"Logging localization keys, {LocalizationManager.Sources.Count}");
+            //foreach (var mKeyPair in LocalizationManager.Sources[0].mDictionary)
+            //{
+            //    BoomerangFoo.Logger.LogInfo($"{mKeyPair.Key}: {LocalizationManager.GetTranslation(mKeyPair.Key)}");
+            //}
 
             var gamemodeModule = __instance.GetMatchSettingModule(UIMatchSettingModule.MatchSetting.GameMode);
             if (gamemodeModule != null && !hasInitialized)
@@ -120,7 +119,6 @@ namespace BoomerangFoo.Patches
                     uiButton.onClick.AddListener(() =>
                     {
                         PatchUIMenuMatchSettings.InvokeMatchTypeSelected(slot);
-                        goToNextSetting.Invoke(__instance, null);
                     });
                     var nav = uiButton.navigation;
                     nav.mode |= UnityEngine.UI.Navigation.Mode.Vertical;
@@ -148,24 +146,24 @@ namespace BoomerangFoo.Patches
                 nav2.mode |= UnityEngine.UI.Navigation.Mode.Vertical;
                 firstButton.navigation = nav2;
 
+                // Still buggy
+                //if (GameMode.slots.Count > 6 && false)
+                //{
+                //    var newGamemodeChoices = UnityEngine.Object.Instantiate(gamemodeChoices);
+                //    newGamemodeChoices.transform.SetParent(gamemodeModule.transform, false);
+                //    //newGamemodeChoices.transform.position += Vector3.down;
+                //    var newRectTransform = newGamemodeChoices.GetComponent<RectTransform>();
+                //    Vector2 currentPos = newRectTransform.anchoredPosition;
+                //    currentPos.y -= 150f;
+                //    newRectTransform.anchoredPosition = currentPos;
+                //    newRectTransform.localScale = new Vector3(0.75f, 0.75f, 1f);
 
-                if (GameMode.slots.Count > 6)
-                {
-                    var newGamemodeChoices = UnityEngine.Object.Instantiate(gamemodeChoices);
-                    newGamemodeChoices.transform.SetParent(gamemodeModule.transform, false);
-                    //newGamemodeChoices.transform.position += Vector3.down;
-                    var newRectTransform = newGamemodeChoices.GetComponent<RectTransform>();
-                    Vector2 currentPos = newRectTransform.anchoredPosition;
-                    currentPos.y -= 150f;
-                    newRectTransform.anchoredPosition = currentPos;
-                    newRectTransform.localScale = new Vector3(0.75f, 0.75f, 1f);
-
-                    var oldRectTransform = gamemodeChoices.GetComponent<RectTransform>();
-                    currentPos = oldRectTransform.anchoredPosition;
-                    currentPos.y += 80f;
-                    oldRectTransform.anchoredPosition = currentPos;
-                    oldRectTransform.localScale = new Vector3(0.75f, 0.75f, 1f);
-                }
+                //    var oldRectTransform = gamemodeChoices.GetComponent<RectTransform>();
+                //    currentPos = oldRectTransform.anchoredPosition;
+                //    currentPos.y += 80f;
+                //    oldRectTransform.anchoredPosition = currentPos;
+                //    oldRectTransform.localScale = new Vector3(0.75f, 0.75f, 1f);
+                //}
                 hasInitialized = true;
 
                 var modifierSettings = Modifiers.GetModifierSettings(__instance);
