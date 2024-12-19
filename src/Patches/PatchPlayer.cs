@@ -194,7 +194,6 @@ namespace BoomerangFoo.Patches
                 }
                 penalty += PatchPlayer.GoldenDiscPenalty(__instance, oldHasGolden, value);
                 __instance.goldenHoldTime -= penalty;
-                BoomerangFoo.Logger.LogInfo($"Applied penalty {penalty}");
             }
         }
 

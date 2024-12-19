@@ -44,7 +44,6 @@ namespace BoomerangFoo.UI
                         var label = setting.GetChild(0);
                         var labelTextMesh = label.GetComponentInChildren<TextMeshProUGUI>();
                         var slider = setting.GetChild(1).GetComponent<UISliderButton>();
-                        //BoomerangFoo.Logger.LogInfo($"label mTerm: {}");
                         mTerm = label.GetComponentInChildren<Localize>().Term;
                         modifierSetting = new ModifierSetting(ModifierSetting.Type.Slider, mTerm, labelTextMesh.text, setting.gameObject, slider);
                         break;

@@ -71,7 +71,6 @@ namespace BoomerangFoo.GameModes
         }
         public float GetPenalty(Player player, Player.HoldingGoldenDisc oldHolding, Player.HoldingGoldenDisc newHolding)
         {
-            BoomerangFoo.Logger.LogInfo($"{player.character.name}: {oldHolding} {newHolding}");
             if (oldHolding == Player.HoldingGoldenDisc.IsHolding)
             {
                 if (newHolding == Player.HoldingGoldenDisc.No || newHolding == Player.HoldingGoldenDisc.IsDropped)
