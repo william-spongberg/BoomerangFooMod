@@ -8,6 +8,7 @@ using TMPro;
 using System.Reflection;
 using BoomerangFoo.UI;
 using I2.Loc;
+using UnityEngine.UI;
 
 namespace BoomerangFoo.Patches
 {
@@ -80,6 +81,7 @@ namespace BoomerangFoo.Patches
     class UIMenuMatchSettingsInitPatch
     {
         private static bool hasInitialized = false;
+        private static readonly MethodInfo goToNextSetting = typeof(UIMenuMatchSettings).GetMethod("GoToNextSetting", BindingFlags.NonPublic | BindingFlags.Instance);
 
         static void Postfix(UIMenuMatchSettings __instance)
         {
@@ -94,11 +96,20 @@ namespace BoomerangFoo.Patches
             {
                 var gamemodeChoices = gamemodeModule.gameObject.transform.GetChild(1).gameObject;
 
-                for (int i = 1; i < GameMode.slots.Count; i++)
+                List<Image> images = [];
+                for (int i = 0; i < 4; i++)
+                {
+                    var image = gamemodeChoices.transform.GetChild(i).GetChild(0).GetChild(0);
+                    images.Add(image.GetComponent<Image>());
+                    //image.gameObject.SetActive(false);
+                }
+
+                gamemodeChoices.transform.GetChild(1).SetAsFirstSibling();
+                for (int i = 0; i < GameMode.slots.Count; i++)
                 {
                     // Create new gamemode button, copied from an existing one
                     var gamemode = GameMode.slots[i];
-                    var template = gamemodeChoices.transform.GetChild(gamemode.slotTemplate);
+                    var template = gamemodeChoices.transform.GetChild(3);
                     var newChoice = UnityEngine.Object.Instantiate(template);
                     newChoice.transform.SetParent(gamemodeChoices.transform, false);
 
@@ -107,19 +118,34 @@ namespace BoomerangFoo.Patches
                     var buttonText = newChoice.GetComponentInChildren<TextMeshProUGUI>();
                     Localize localize = null;
 
-                    if (i >= 4)
-                    {
-                        buttonText.text = gamemode.name;
-                        localize = buttonText.GetComponentInChildren<I2.Loc.Localize>();
-                        Component.Destroy(localize);
-                    }
-                    var uiButton = newButton.GetComponent<UIButton>();
-                    uiButton.onClick.RemoveAllListeners();
+                    buttonText.text = gamemode.name;
+                    // this destroys the localization for the default options. not elegant
+                    localize = buttonText.GetComponentInChildren<I2.Loc.Localize>();
+                    Component.Destroy(localize);
+
                     GameMode.Slot slot = (GameMode.Slot)i;
-                    uiButton.onClick.AddListener(() =>
+                    var uiButton = newButton.GetComponent<UIButton>();
+                    if (uiButton != null)
                     {
-                        PatchUIMenuMatchSettings.InvokeMatchTypeSelected(slot);
-                    });
+                        uiButton.onClick.RemoveAllListeners();
+                        uiButton.onClick = new Button.ButtonClickedEvent();
+                        uiButton.onClick.AddListener(() =>
+                        {
+                            PatchUIMenuMatchSettings.InvokeMatchTypeSelected(slot);
+                            goToNextSetting.Invoke(__instance, null);
+                        });
+                        uiButton.transition = Selectable.Transition.None;
+                        if (i == 0)
+                        {
+                            uiButton.Select();
+                        }
+                    }
+
+                    // Image
+                    var illustration = newButton.transform.GetChild(0).gameObject;
+                    var targetImage = images[gamemode.slotTemplate];
+                    illustration.GetComponent<Image>().sprite = targetImage.sprite;
+
                     var nav = uiButton.navigation;
                     nav.mode |= UnityEngine.UI.Navigation.Mode.Vertical;
                     uiButton.navigation = nav;
@@ -127,16 +153,13 @@ namespace BoomerangFoo.Patches
 
                     // Set the hint text and destroy the localization
                     var newHint = newChoice.transform.GetChild(1).gameObject;
-                    var hintText = newHint.GetComponentInChildren<TextMeshProUGUI>();;
-                    if (i >= 4)
-                    {
-                        hintText.text = gamemode.hint;
-                        localize = newHint.GetComponentInChildren<I2.Loc.Localize>();
-                    }
+                    var hintText = newHint.GetComponentInChildren<TextMeshProUGUI>();
+                    hintText.text = gamemode.hint;
+                    localize = newHint.GetComponentInChildren<I2.Loc.Localize>();
                     Component.Destroy(localize);
                 }
 
-                for (int i = 1; i < 4; i++)
+                for (int i = 0; i < 4; i++)
                 {
                     gamemodeChoices.transform.GetChild(i).gameObject.SetActive(false);
                 }
@@ -147,23 +170,36 @@ namespace BoomerangFoo.Patches
                 firstButton.navigation = nav2;
 
                 // Still buggy
-                //if (GameMode.slots.Count > 6 && false)
-                //{
-                //    var newGamemodeChoices = UnityEngine.Object.Instantiate(gamemodeChoices);
-                //    newGamemodeChoices.transform.SetParent(gamemodeModule.transform, false);
-                //    //newGamemodeChoices.transform.position += Vector3.down;
-                //    var newRectTransform = newGamemodeChoices.GetComponent<RectTransform>();
-                //    Vector2 currentPos = newRectTransform.anchoredPosition;
-                //    currentPos.y -= 150f;
-                //    newRectTransform.anchoredPosition = currentPos;
-                //    newRectTransform.localScale = new Vector3(0.75f, 0.75f, 1f);
+                if (GameMode.slots.Count > 6)
+                {
+                    var newGamemodeChoices = UnityEngine.Object.Instantiate(gamemodeChoices);
+                    newGamemodeChoices.transform.SetParent(gamemodeModule.transform, false);
+                    foreach (Transform child in newGamemodeChoices.transform)
+                    {
+                        UnityEngine.Object.Destroy(child.gameObject);
+                    }
 
-                //    var oldRectTransform = gamemodeChoices.GetComponent<RectTransform>();
-                //    currentPos = oldRectTransform.anchoredPosition;
-                //    currentPos.y += 80f;
-                //    oldRectTransform.anchoredPosition = currentPos;
-                //    oldRectTransform.localScale = new Vector3(0.75f, 0.75f, 1f);
-                //}
+                    int numToMove = GameMode.slots.Count / 2;
+                    for (int i = 0; i < numToMove; i++)
+                    {
+                        Transform lastChild = gamemodeChoices.transform.GetChild(gamemodeChoices.transform.childCount - 1);
+                        lastChild.SetParent(newGamemodeChoices.transform);
+                        lastChild.SetSiblingIndex(0);
+                    }
+
+                    //newGamemodeChoices.transform.position += Vector3.down;
+                    var newRectTransform = newGamemodeChoices.GetComponent<RectTransform>();
+                    Vector2 currentPos = newRectTransform.anchoredPosition;
+                    currentPos.y -= 150f;
+                    newRectTransform.anchoredPosition = currentPos;
+                    newRectTransform.localScale = new Vector3(0.75f, 0.75f, 1f);
+
+                    var oldRectTransform = gamemodeChoices.GetComponent<RectTransform>();
+                    currentPos = oldRectTransform.anchoredPosition;
+                    currentPos.y += 80f;
+                    oldRectTransform.anchoredPosition = currentPos;
+                    oldRectTransform.localScale = new Vector3(0.75f, 0.75f, 1f);
+                }
                 hasInitialized = true;
 
                 var modifierSettings = Modifiers.GetModifierSettings(__instance);

@@ -3,6 +3,8 @@ using BoomerangFoo.Powerups;
 using HarmonyLib;
 using System;
 using System.Reflection;
+using UnityEngine;
+using static Player;
 
 namespace BoomerangFoo.Patches
 {
@@ -41,6 +43,8 @@ namespace BoomerangFoo.Patches
         public static Func<Player, bool> PreStartFall;
 
         public static Predicate<Player> DoToggleGoldenDiscPFX;
+
+        public static Func<Player, Player.HoldingGoldenDisc, Player.HoldingGoldenDisc, float> GoldenDiscPenalty;
 
         public static event Action<Player, PowerupType> OnPreStartPowerup;
         public static void InvokePreStartPowerup(Player player, PowerupType powerupType) { OnPreStartPowerup?.Invoke(player, powerupType); }
@@ -171,6 +175,61 @@ namespace BoomerangFoo.Patches
         static void Postfix(Player __instance)
         {
             PatchPlayer.InvokePostRunGoldenDiscTimer(__instance);
+        }
+    }
+
+    [HarmonyPatch(typeof(Player), "HasGoldenDisc", MethodType.Setter)]
+    class PlayerSetHasGoldenDiscPatch
+    {
+        static void Prefix(Player __instance, Player.HoldingGoldenDisc value)
+        {
+            if (PatchPlayer.GoldenDiscPenalty != null)
+            {
+                Player.HoldingGoldenDisc oldHasGolden = __instance.HasGoldenDisc;
+                float penalty = 0;
+                if (oldHasGolden != value && (oldHasGolden == HoldingGoldenDisc.No || oldHasGolden == HoldingGoldenDisc.IsDropped))
+                {
+                    // counteract the default penalty
+                    penalty -= Singleton<GameManager>.Instance.goldenGoalScore * 0.05f;
+                }
+                penalty += PatchPlayer.GoldenDiscPenalty(__instance, oldHasGolden, value);
+                __instance.goldenHoldTime -= penalty;
+                BoomerangFoo.Logger.LogInfo($"Applied penalty {penalty}");
+            }
+        }
+
+        static void Postfix(Player __instance)
+        {
+            __instance.goldenHoldTime = Math.Max(__instance.goldenHoldTime, 0);
+        }
+    }
+
+    [HarmonyPatch(typeof(Player), nameof(Player.OnPickupColliderTriggered))]
+    class PlayerOnPickupColliderTriggeredPatch
+    {
+        private static bool? canCatchTeammates = null;
+
+        static void Prefix(Player __instance, Collider2D collider)
+        {
+            if (!collider.CompareTag("Disc"))
+            {
+                return;
+            }
+            Disc disc = collider.GetComponent<Disc>();
+            if (disc.IsGoldenDisc)
+            {
+                canCatchTeammates = Singleton<SettingsManager>.Instance.MatchSettings.canCatchTeammatesDiscs;
+                Singleton<SettingsManager>.Instance.MatchSettings.canCatchTeammatesDiscs = true;
+            }
+        }
+
+        static void Postfix(Player __instance)
+        {
+            if (canCatchTeammates != null)
+            {
+                Singleton<SettingsManager>.Instance.MatchSettings.canCatchTeammatesDiscs = (bool)canCatchTeammates;
+                canCatchTeammates = null;
+            }
         }
     }
 

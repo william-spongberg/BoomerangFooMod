@@ -100,7 +100,7 @@ namespace BoomerangFoo.UI
             return newSetting;
         }
 
-        public static void ShowSelectedGameMode(string gameModeId)
+        public static void ShowSelectedGameMode(string gameModeId, bool hideOthers = true)
         {
             foreach (var setting in settings.Values)
             {
@@ -110,7 +110,7 @@ namespace BoomerangFoo.UI
                     {
                         setting?.gameObject.SetActive(true);
                     }
-                    else
+                    else if (hideOthers)
                     {
                         setting?.gameObject.SetActive(false);
                     }

@@ -42,12 +42,13 @@ public class BoomerangFoo : BaseUnityPlugin
         GameMode.Register(new GameMode("Deathmatch", "Free For All", "Everyone is an enemy", SettingsManager.MatchType.DeathMatch, false, 0), GameMode.Slot.Deathmatch);
         GameMode.Register(new GameMode("TeamDeathmatch", "Team Up", "Play in teams", SettingsManager.MatchType.DeathMatch, true, 1), GameMode.Slot.TeamUp);
         GameMode.Register(new GameMode("HideAndSeek", "Hide And Seek", "Find your foes", SettingsManager.MatchType.HideAndSeek, false, 2), GameMode.Slot.HideAndSeek);
-        GameMode.Register(new GameMode("GoldenBoomerang", "Golden Boomerang", "Hold onto the golden boomerang", SettingsManager.MatchType.GoldenDisc, false, 3), GameMode.Slot.GoldenBoomerang);
+        GameMode.Register(new GoldenBoomerang(), GameMode.Slot.GoldenBoomerang);
         PatchUIMenuMatchSettings.OnMatchTypeSelected += GameMode.MatchSelected;
 
         GameMode.Register(new PowerDrain(), GameMode.Slot.Extra1);
         GameMode.Register(new RamboHulk(), GameMode.Slot.Extra2);
         GameMode.Register(new SurviveTillDawn(), GameMode.Slot.Extra3);
+        GameMode.Register(new TeamGolden(), GameMode.Slot.Extra4);
 
         PatchGameManager.OnPreStartMatch += (gameManager) =>
         {

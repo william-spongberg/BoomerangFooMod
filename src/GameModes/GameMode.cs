@@ -22,7 +22,9 @@ namespace BoomerangFoo.GameModes
             GoldenBoomerang = 3,
             Extra1 = 4,
             Extra2 = 5,
-            Extra3 = 6
+            Extra3 = 6,
+            Extra4 = 7,
+            Extra5 = 8
         }
 
         public enum Relationship
@@ -83,9 +85,9 @@ namespace BoomerangFoo.GameModes
             selected = slots[(int)gamemodeId];
             Singleton<SettingsManager>.Instance.matchType = selected.matchType;
             Singleton<SettingsManager>.Instance.teamMatch = selected.teamMatch;
+            Modifiers.ShowSelectedGameMode(selected.id);
             selected.Hook();
             selected.isHooked = true;
-            Modifiers.ShowSelectedGameMode(selected.id);
             BoomerangFoo.Logger.LogInfo($"[Slot {gamemodeId}] Selected gamemode {selected.id}!");
 
             Modifiers.LoadSettings();

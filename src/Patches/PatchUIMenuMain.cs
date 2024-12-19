@@ -10,6 +10,7 @@ namespace BoomerangFoo.Patches
     [HarmonyPatch(typeof(UIMenuMain), nameof(UIMenuMain.Init))]
     class UIMenuMainInitPatch
     {
+        static string versionText = null;
         static void Postfix(UIMenuMain __instance)
         {
             var versionGo = GameObject.Find("Version Number");
@@ -19,8 +20,11 @@ namespace BoomerangFoo.Patches
                 if (text != null)
                 {
                     string version = text.text;
-                    string newVersionText = $"{version} | MOD {MyPluginInfo.PLUGIN_VERSION}";
-                    text.text = newVersionText;
+                    if (versionText == null)
+                    {
+                        versionText = $"{version} | MOD {MyPluginInfo.PLUGIN_VERSION}";
+                    }
+                    text.text = versionText;
                 }
             }
         }

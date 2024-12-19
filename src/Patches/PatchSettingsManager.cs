@@ -5,6 +5,11 @@ using System;
 
 namespace BoomerangFoo.Patches
 {
+    class PatchSettingsManager
+    {
+        public static Func<SettingsManager, float> GoldenDiscHoldTime;
+    }
+
     [HarmonyPatch(typeof(SettingsManager), nameof(SettingsManager.PrepareMatchLength))]
     class SettingsManagerPrepareMatchLengthPatch
     {
@@ -50,6 +55,24 @@ namespace BoomerangFoo.Patches
         static void Postfix()
         {
             Modifiers.SaveSettings();
+        }
+    }
+
+    [HarmonyPatch(typeof(SettingsManager), nameof(SettingsManager.SetupGoldenDisc))]
+    class SettingsManagerSetupGoldenDiscPatch
+    {
+        static bool Prefix(SettingsManager __instance)
+        {
+            if (PatchSettingsManager.GoldenDiscHoldTime != null)
+            {
+                float holdTime = PatchSettingsManager.GoldenDiscHoldTime(__instance);
+                if (holdTime > 0)
+                {
+                    __instance.goalTimeStart = holdTime;
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

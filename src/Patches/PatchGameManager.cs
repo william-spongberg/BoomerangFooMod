@@ -28,7 +28,9 @@ namespace BoomerangFoo.Patches
         public static event Action<GameManager, Player, Player> OnPreAddPlayerKill;
         public static void InvokePreAddPlayerKill(GameManager gameManager, Player killer, Player killed) { OnPreAddPlayerKill?.Invoke(gameManager, killer, killed); }
 
-        public static Func<GameManager, Player, Player, GameMode.Relationship> PlayerRelationship; 
+        public static Func<GameManager, Player, Player, GameMode.Relationship> PlayerRelationship;
+
+        public static Func<GameManager, Player, float> GoldenDiscPlayerScore;
 
     }
 
@@ -121,13 +123,28 @@ namespace BoomerangFoo.Patches
 
         static void Prefix(GameManager __instance, Player winningPlayer)
         {
+            // Override playerID to GetRowID, which handles the team case
             winningPlayerId = winningPlayer.playerID;
             winningPlayer.playerID = __instance.GetRowID(winningPlayer);
         }
 
         static void Postfix(Player winningPlayer)
         {
+            // Restore the original id
             winningPlayer.playerID = winningPlayerId;
+        }
+    }
+
+    [HarmonyPatch(typeof(GameManager), nameof(GameManager.UpdateGoldenDiscScore))]
+    class GameManagerUpdateGoldenDiscScorePatch
+    {
+
+        static void Prefix(GameManager __instance, Player player, ref float playerScore)
+        {
+            if (PatchGameManager.GoldenDiscPlayerScore != null)
+            {
+                playerScore = PatchGameManager.GoldenDiscPlayerScore(__instance, player);
+            }
         }
     }
 
