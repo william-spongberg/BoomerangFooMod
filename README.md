@@ -55,6 +55,17 @@ The simplest way to disable the mod is to remove `Bepinex/plugins/BoomerangFoo/B
   - Attack Speed: How fast do you melee when caffeinated.
 - Shield
   -  Shield Hits: Number of hits a shield can withstand
+ 
+## Debug Mode
+
+The developers left a debug mode in the code. This mod can unlock it by pressing `F1` key. 
+
+- `M` key: Skip to next level.
+- `H` key: Unlock all hats.
+- `Page Down` key: Save unlocked items to disk.
+- `Ctr+H`: For hide and seek, toggle the seeker's attempt limit.
+- `` ` `` (back tick) key: Hold to display level index.
+- `Insert` key: It's extremely specific. It is hardcoded to unlock the Glasses costume for Bacon.
 
 ## Disclaimer
 This mod is unaffiliated with Cranky Watermelon and contains no *Boomerang Fu* assets.
