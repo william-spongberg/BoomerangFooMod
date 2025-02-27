@@ -1,5 +1,10 @@
 ![](media/logo.png)
 
+> [!NOTE]
+> Forked from <https://github.com/Jeffjewett27/BoomerangFoo>. All credits to @Jeffjewett27 and @ws13sk, I've just forked this so I can create my own game modes and such :).
+
+---
+
 Boomerang Foo: Chaos Mod
 ======================================
 
