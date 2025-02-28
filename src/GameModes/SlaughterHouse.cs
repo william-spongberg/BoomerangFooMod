@@ -29,15 +29,13 @@ namespace BoomerangFoo.GameModes
         public override void Hook()
         {
             PatchGameManager.OnPreAddPlayerKill += OnAddPlayerKill;
-            PatchGameManager.OnPostPrepareRound += getPlayerCount;
-            PatchGameManager.NumPlayerCheckDisabled = true;
+            PatchGameManager.OnPostPrepareRound += PrepareRound;
         }
 
         public override void Unhook()
         {
             PatchGameManager.OnPreAddPlayerKill -= OnAddPlayerKill;
-            PatchGameManager.OnPostPrepareRound -= getPlayerCount;
-            PatchGameManager.NumPlayerCheckDisabled = false;
+            PatchGameManager.OnPostPrepareRound -= PrepareRound;
         }
 
         public override void RegisterSettings()
@@ -106,7 +104,16 @@ namespace BoomerangFoo.GameModes
             });
         }
 
-        public void getPlayerCount(GameManager gameManager)
+        // TODO: account for player suicides
+        private void PrepareRound(GameManager gameManager)
+        {
+            PatchGameManager.NumPlayerCheckDisabled = true;
+            GetPlayerCount(gameManager);
+            ResetPlayerLives();
+            BoomerangFoo.Logger.LogInfo("Round prepared!");
+        }
+
+        private void GetPlayerCount(GameManager gameManager)
         {
             playersAlive = 0;
             foreach (Player player in gameManager.players)
@@ -120,7 +127,15 @@ namespace BoomerangFoo.GameModes
             BoomerangFoo.Logger.LogInfo($"There are {playersAlive} players alive!");
         }
 
-        public void OnAddPlayerKill(GameManager gameManager, Player killer, Player killed)
+        private void ResetPlayerLives()
+        {
+            for (int i = 0; i < MAX_NUM_PLAYERS; i++)
+            {
+                PlayerLivesArray[i] = PlayerLives - 1;
+            }
+        }
+
+        private void OnAddPlayerKill(GameManager gameManager, Player killer, Player killed)
         {
             // debug logging
             BoomerangFoo.Logger.LogInfo($"Player {killer.playerID} killed player {killed.playerID}!");
@@ -143,9 +158,6 @@ namespace BoomerangFoo.GameModes
                         PatchGameManager.NumPlayerCheckDisabled = false;
                         object[] parameters = new object[] { };
                         endRoundMethod.Invoke(gameManager, parameters);
-
-                        // disable player check again for next round
-                        PatchGameManager.NumPlayerCheckDisabled = true;
                     }
                     else
                     {
