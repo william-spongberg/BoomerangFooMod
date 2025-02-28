@@ -1,5 +1,6 @@
 using BoomerangFoo.Patches;
 using BoomerangFoo.UI;
+using HarmonyLib;
 using RewiredConsts;
 using System.Linq;
 using System.Reflection;
@@ -7,7 +8,7 @@ using UnityEngine.Profiling.Memory.Experimental;
 
 namespace BoomerangFoo.GameModes
 {
-    public class ForeverDie : GameMode
+    public class SlaughterHouse : GameMode
     {
 
         public int PlayerLives = 1;
@@ -20,7 +21,7 @@ namespace BoomerangFoo.GameModes
         private const int MAX_DELAY = 31;
         private const int MAX_NUM_PLAYERS = 6;
 
-        public ForeverDie() : base("ForeverDie", "Slaughter House", "Kill or be killed", SettingsManager.MatchType.DeathMatch, false, 0)
+        public SlaughterHouse() : base("SlaughterHouse", "Slaughter House", "Kill or be killed", SettingsManager.MatchType.DeathMatch, false, 0)
         {
 
         }
@@ -28,14 +29,14 @@ namespace BoomerangFoo.GameModes
         public override void Hook()
         {
             PatchGameManager.OnPreAddPlayerKill += OnAddPlayerKill;
-            PatchGameManager.OnPreStartMatch += getPlayerCount;
+            PatchGameManager.OnPostPrepareRound += getPlayerCount;
             PatchGameManager.NumPlayerCheckDisabled = true;
         }
 
         public override void Unhook()
         {
             PatchGameManager.OnPreAddPlayerKill -= OnAddPlayerKill;
-            PatchGameManager.OnPreStartMatch -= getPlayerCount;
+            PatchGameManager.OnPostPrepareRound -= getPlayerCount;
             PatchGameManager.NumPlayerCheckDisabled = false;
         }
 
@@ -56,6 +57,11 @@ namespace BoomerangFoo.GameModes
             for (int i = 1; i < MAX_LIVES; i++)
             {
                 livesOptions[i] = i.ToString();
+                if (i == 1)
+                {
+                    livesHints[i] = "Die after being killed 1 time. Seems kind of pointless, doesn't it?";
+                    continue;
+                }
                 livesHints[i] = $"Die after being killed {i} times";
             }
             // default to infinite lives
@@ -67,7 +73,8 @@ namespace BoomerangFoo.GameModes
                 int lives = sliderIndex == 0 ? int.MaxValue / 2 : sliderIndex;
                 for (int i = 0; i < MAX_NUM_PLAYERS; i++)
                 {
-                    PlayerLivesArray[i] = lives;
+                    // -1 because we want to keep track of lives left, not total lives
+                    PlayerLivesArray[i] = lives - 1;
                 }
             });
 
@@ -82,6 +89,11 @@ namespace BoomerangFoo.GameModes
             for (int i = 1; i < MAX_DELAY; i++)
             {
                 delayOptions[i] = i.ToString();
+                if (i == 1)
+                {
+                    delayHints[i] = "Respawn after 1 second";
+                    continue;
+                }
                 delayHints[i] = $"Respawn after {i} seconds";
             }
             // default to 1 second respawn delay
@@ -102,8 +114,10 @@ namespace BoomerangFoo.GameModes
                 if (player != null)
                 {
                     playersAlive++;
+                    BoomerangFoo.Logger.LogInfo($"Player {player.playerID} is alive!");
                 }
             }
+            BoomerangFoo.Logger.LogInfo($"There are {playersAlive} players alive!");
         }
 
         public void OnAddPlayerKill(GameManager gameManager, Player killer, Player killed)
@@ -121,10 +135,26 @@ namespace BoomerangFoo.GameModes
                 if (playersAlive == 1)
                 {
                     BoomerangFoo.Logger.LogInfo($"Player {killer.playerID} wins!");
-                    // TODO: force end round here
+                    // force end round here
+                    var endRoundMethod = typeof(GameManager).GetMethod("CheckPlayersLeftStanding", BindingFlags.NonPublic | BindingFlags.Instance);
+                    if (endRoundMethod != null)
+                    {
+                        // enable player check
+                        PatchGameManager.NumPlayerCheckDisabled = false;
+                        object[] parameters = new object[] { };
+                        endRoundMethod.Invoke(gameManager, parameters);
+
+                        // disable player check again for next round
+                        PatchGameManager.NumPlayerCheckDisabled = true;
+                    }
+                    else
+                    {
+                        BoomerangFoo.Logger.LogError("Failed to find CheckPlayersLeftStanding method!");
+                    }
                 }
                 return;
             }
+            BoomerangFoo.Logger.LogInfo($"There are {playersAlive} players left remaining!");
 
             // yay has lives left
             BoomerangFoo.Logger.LogInfo($"Player {killed.playerID} has {PlayerLivesArray[killed.playerID]} lives left!");
