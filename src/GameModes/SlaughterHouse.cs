@@ -68,12 +68,8 @@ namespace BoomerangFoo.GameModes
             playerLives.SetGameStartCallback((gameMode, sliderIndex) =>
             {
                 // if slider is at 0, set delay to very large number (close to infinite)
-                int lives = sliderIndex == 0 ? int.MaxValue / 2 : sliderIndex;
-                for (int i = 0; i < MAX_NUM_PLAYERS; i++)
-                {
-                    // -1 because we want to keep track of lives left, not total lives
-                    PlayerLivesArray[i] = lives - 1;
-                }
+                // -1 because we want lives remaining, not total lives
+                PlayerLives = sliderIndex == 0 ? int.MaxValue / 2 : sliderIndex - 1;
             });
 
             // delay slider
@@ -131,7 +127,7 @@ namespace BoomerangFoo.GameModes
         {
             for (int i = 0; i < MAX_NUM_PLAYERS; i++)
             {
-                PlayerLivesArray[i] = PlayerLives - 1;
+                PlayerLivesArray[i] = PlayerLives;
             }
         }
 
