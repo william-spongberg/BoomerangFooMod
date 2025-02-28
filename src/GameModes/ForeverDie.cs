@@ -10,7 +10,7 @@ namespace BoomerangFoo.GameModes
     public class ForeverDie : GameMode
     {
 
-        public ForeverDie() : base("ForeverDie", "Slaughter House", "Kill until you win", SettingsManager.MatchType.KingOfTheHill, false, 0)
+        public ForeverDie() : base("ForeverDie", "Slaughter House", "Unlimited respawns", SettingsManager.MatchType.DeathMatch, false, 0)
         {
             
         }
@@ -18,11 +18,13 @@ namespace BoomerangFoo.GameModes
         public override void Hook()
         {
             PatchPlayer.OnPostDie += OnDeath;
+            PatchGameManager.OnPreAddPlayerKill += OnAddPlayerKill;
         }
 
         public override void Unhook()
         {
             PatchPlayer.OnPostDie -= OnDeath;
+            PatchGameManager.OnPreAddPlayerKill -= OnAddPlayerKill;
         }
 
         public override void RegisterSettings()
@@ -33,13 +35,16 @@ namespace BoomerangFoo.GameModes
 
         public void OnDeath(Player player)
         {
-            // debug logging
-            BoomerangFoo.Logger.LogInfo($"Player {player.playerID} died!");
-            BoomerangFoo.Logger.LogInfo($"Player has {player.killsThisRound} kills this round!");
 
-            // respawn player
-            // start with one disc, don't reset powerups, don't reset kills, spawn new disc
-            //player.Init(1, false, true, true);
+        }
+
+        public void OnAddPlayerKill(GameManager gameManager, Player killer, Player killed) {
+            // debug logging
+            BoomerangFoo.Logger.LogInfo($"Player {killer.playerID} killed player {killed.playerID}!");
+            BoomerangFoo.Logger.LogInfo($"Player {killer.playerID} has {killer.killsThisRound} kills this round!");
+            
+            // respawn killed player
+            gameManager.RespawnPlayer(killed);
         }
     }
 }
