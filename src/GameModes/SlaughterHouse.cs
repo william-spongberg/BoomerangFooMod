@@ -52,10 +52,10 @@ namespace BoomerangFoo.GameModes
             livesOptions[0] = "Infinite";
             livesHints[0] = "Players can never die. Play until kill limit reached!";
             // minimum 2 lives
-            for (int i = 1; i < MAX_LIVES-1; i++)
+            for (int i = 1; i < MAX_LIVES - 1; i++)
             {
-                livesOptions[i] = (i+1).ToString();
-                livesHints[i] = $"Die after being killed {i+1} times";
+                livesOptions[i] = (i + 1).ToString();
+                livesHints[i] = $"Die after being killed {i + 1} times";
             }
             // default to infinite lives
             playerLives.SetSliderOptions(livesOptions, 0, livesHints);
@@ -63,7 +63,7 @@ namespace BoomerangFoo.GameModes
             playerLives.SetGameStartCallback((gameMode, sliderIndex) =>
             {
                 // if slider is at 0, set delay to very large number (close to infinite)
-                PlayerLives = sliderIndex == 0 ? int.MaxValue / 2 : sliderIndex+1;
+                PlayerLives = sliderIndex == 0 ? int.MaxValue / 2 : sliderIndex + 1;
             });
 
             // delay slider
@@ -185,21 +185,30 @@ namespace BoomerangFoo.GameModes
                 if (player)
                 {
                     // check if player commited suicide
-                    if (!player.isSpawningIn && player.actorState == Actor.ActorState.Dead)
+                    if (!player.isSpawningIn)
                     {
-                        // check if has more than one life remaining
-                        if (PlayerLivesArray[player.playerID] > 1)
+                        if (player.actorState == Actor.ActorState.Dead)
                         {
-                            // respawn player, shouldn't remain dead
-                            BoomerangFoo.Logger.LogInfo($"Player {player.playerID} is dead but has {PlayerLivesArray[player.playerID]} lives left, respawning!");
-                            PlayerLivesArray[player.playerID]--;
-                            gameManager.RespawnPlayer(player, RespawnDelay);
-                            alivePlayers++;
+                            // check if has more than one life remaining
+                            if (PlayerLivesArray[player.playerID] > 1)
+                            {
+                                // respawn player, shouldn't remain dead
+                                BoomerangFoo.Logger.LogInfo($"Player {player.playerID} is dead but has {PlayerLivesArray[player.playerID]} lives left, respawning!");
+                                PlayerLivesArray[player.playerID]--;
+                                gameManager.RespawnPlayer(player, RespawnDelay);
+                                alivePlayers++;
+                                player.isSpawningIn = true;
+                            }
+                            else
+                            {
+                                // player will remain dead, check if end round condition met
+                                CheckEndRound(gameManager);
+                            }
                         }
+                        // alive now, reset flag
                         else
                         {
-                            // player will remain dead, check if end round condition met
-                            CheckEndRound(gameManager);
+                            player.isSpawningIn = false;
                         }
                     }
                     else
