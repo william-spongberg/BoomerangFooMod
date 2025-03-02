@@ -51,15 +51,11 @@ namespace BoomerangFoo.GameModes
             string[] livesHints = new string[MAX_LIVES];
             livesOptions[0] = "Infinite";
             livesHints[0] = "Players can never die. Play until kill limit reached!";
-            for (int i = 1; i < MAX_LIVES; i++)
+            // minimum 2 lives
+            for (int i = 1; i < MAX_LIVES-1; i++)
             {
-                livesOptions[i] = i.ToString();
-                if (i == 1)
-                {
-                    livesHints[i] = "Die after only being killed 1 time. Seems kind of pointless, doesn't it?";
-                    continue;
-                }
-                livesHints[i] = $"Die after being killed {i} times";
+                livesOptions[i] = (i+1).ToString();
+                livesHints[i] = $"Die after being killed {i+1} times";
             }
             // default to infinite lives
             playerLives.SetSliderOptions(livesOptions, 0, livesHints);
@@ -67,7 +63,7 @@ namespace BoomerangFoo.GameModes
             playerLives.SetGameStartCallback((gameMode, sliderIndex) =>
             {
                 // if slider is at 0, set delay to very large number (close to infinite)
-                PlayerLives = sliderIndex == 0 ? int.MaxValue / 2 : sliderIndex;
+                PlayerLives = sliderIndex == 0 ? int.MaxValue / 2 : sliderIndex+1;
             });
 
             // delay slider
@@ -105,7 +101,7 @@ namespace BoomerangFoo.GameModes
             endingRound = false;
             PatchGameManager.NumPlayerCheckDisabled = true;
             GetPlayerCount(gameManager);
-            ResetPlayerLives();
+            ResetPlayerLives(gameManager);
             BoomerangFoo.Logger.LogInfo("Round prepared!");
         }
 
@@ -123,11 +119,11 @@ namespace BoomerangFoo.GameModes
             BoomerangFoo.Logger.LogInfo($"There are {playersAlive} players alive!");
         }
 
-        private void ResetPlayerLives()
+        private void ResetPlayerLives(GameManager gameManager)
         {
-            for (int i = 0; i < MAX_NUM_PLAYERS; i++)
+            foreach (Player player in gameManager.players)
             {
-                PlayerLivesArray[i] = PlayerLives;
+                PlayerLivesArray[player.playerID] = PlayerLives;
             }
             BoomerangFoo.Logger.LogInfo($"Players have {PlayerLives} lives!");
         }
@@ -157,16 +153,13 @@ namespace BoomerangFoo.GameModes
         private void CheckEndRound(GameManager gameManager)
         {
             // if only one player is alive, end the round
-            if (playersAlive <= 1 && !endingRound)
+            if (playersAlive <= 1 && gameManager.OpponentsLeftStandingNow() <= 1 && !endingRound)
             {
-                BoomerangFoo.Logger.LogInfo($"There are {gameManager.OpponentsLeftStandingNow()} opponents left standing!");
-
-                // TODO: use CheckPlayersLeftStanding instead to allow animations to finish + replay to work
                 // force end round here
-                var endRoundMethod = typeof(GameManager).GetMethod("EndRound", BindingFlags.NonPublic | BindingFlags.Instance);
+                var endRoundMethod = typeof(GameManager).GetMethod("CheckPlayersLeftStanding", BindingFlags.NonPublic | BindingFlags.Instance);
                 if (endRoundMethod == null)
                 {
-                    BoomerangFoo.Logger.LogError("Failed to find EndRound method!");
+                    BoomerangFoo.Logger.LogError("Failed to find CheckPlayersLeftStanding method!");
                 }
                 else
                 {
@@ -175,9 +168,10 @@ namespace BoomerangFoo.GameModes
                     PatchGameManager.NumPlayerCheckDisabled = false;
 
                     // force check players left standing
-                    object[] parameters = new object[] { true };
+                    object[] parameters = new object[] { };
                     endRoundMethod.Invoke(gameManager, parameters);
                     BoomerangFoo.Logger.LogInfo($"{playersAlive} player left standing, ending round!");
+                    BoomerangFoo.Logger.LogInfo($"There are {gameManager.OpponentsLeftStandingNow()} opponents left standing!");
                 }
             }
         }
@@ -188,28 +182,30 @@ namespace BoomerangFoo.GameModes
             // check if any dead players have lives left
             foreach (Player player in gameManager.players)
             {
-                // check if player commited suicide
-                if (player && !player.isSpawningIn && player.actorState == Actor.ActorState.Dead)
+                if (player)
                 {
-                    // check if has more than one life remaining
-                    if (PlayerLivesArray[player.playerID] > 1)
+                    // check if player commited suicide
+                    if (!player.isSpawningIn && player.actorState == Actor.ActorState.Dead)
                     {
-                        // respawn player, shouldn't remain dead
-                        PlayerLivesArray[player.playerID]--;
-                        player.actorState = Actor.ActorState.Alive;
-                        gameManager.RespawnPlayer(player, RespawnDelay);
-                        alivePlayers++;
-                        BoomerangFoo.Logger.LogInfo($"Player {player.playerID} is dead but has {PlayerLivesArray[player.playerID]} lives left, respawning!");
+                        // check if has more than one life remaining
+                        if (PlayerLivesArray[player.playerID] > 1)
+                        {
+                            // respawn player, shouldn't remain dead
+                            BoomerangFoo.Logger.LogInfo($"Player {player.playerID} is dead but has {PlayerLivesArray[player.playerID]} lives left, respawning!");
+                            PlayerLivesArray[player.playerID]--;
+                            gameManager.RespawnPlayer(player, RespawnDelay);
+                            alivePlayers++;
+                        }
+                        else
+                        {
+                            // player will remain dead, check if end round condition met
+                            CheckEndRound(gameManager);
+                        }
                     }
                     else
                     {
-                        // player will remain dead, check if end round condition met
-                        CheckEndRound(gameManager);
+                        alivePlayers++;
                     }
-                }
-                else
-                {
-                    alivePlayers++;
                 }
             }
             // update players alive
